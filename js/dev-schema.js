@@ -1,9 +1,6 @@
 var fs = require("fs-extra")
 var filename = process.argv[2]
 
-//currently configured to return number of calls per tracking number name
-//exports a csv of the results
-
 function trimCsvSlug(slug) {
   var result_arr = slug.split(",")
   for (let i = 0; i < result_arr.length; i++) {

@@ -1,5 +1,4 @@
 class Schema {
-
   constructor( filename, path ) {
     this.fs = require("fs-extra")
     this.data = this.import_csv( filename, path )
@@ -68,9 +67,9 @@ class Schema {
     var path = "./" + dir_path + "/" + filename + ".csv"
     this.fs.writeFile(path, export_str, function(err) {
       if(err) {
-        return console.log(err);
+        return console.log(err)
       }
-      console.log("saved " + path);
+      console.log("saved " + path)
     })
   }
 
