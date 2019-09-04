@@ -22,10 +22,7 @@ function exec(import_filename, export_filename) {
     if (err) { throw err }
     for (var i = 0; i < data.length; i++) {
       buffer += String.fromCharCode(data[i])
-
-    }
-
-    slug_arr = buffer.split("\r\n")
+    }    slug_arr = buffer.split("\r\n")
     for (var i = 0; i < slug_arr.length; i++) {
       data_arr[i] = slug_arr[i].split(",")
       stage_obj = {}
