@@ -42,10 +42,37 @@ class PDF_Redirects {
     return $result_str;
   }
 
+  public function get_nested_echo($dir_slugs,$filename_w_ext,$content) {
+    $result_str = 'echo ';
+    $result_str .= $content;
+    $result_str .= ' > ';
+    foreach ($dir_slugs as $slug) {
+      $result_str .= $slug;
+      $result_str .= '/';
+    }
+    $result_str .= $filename_w_ext;
+    return $result_str;
+  }
+
+  public function get_echo_lines($content_dir,$filename_w_ext,$content) {
+    $result_str = "";
+    $dir_slugs = "";
+    foreach($this->_from as $old_url) {
+      $dir_slugs = $this->get_dir_slugs($old_url,$content_dir);
+      $result_str .= $this->get_nested_echo($dir_slugs,$filename_w_ext,$content);
+      $result_str .= "\r\n";
+    }
+    return $result_str;
+  }
+
   public function export_batch_commands($export_str, $filename, $dir_path) {
     file_put_contents("../" . $dir_path . "/" . $filename . ".bat" , $export_str);
   }
 
+
+
 }
+
+
 
 ?>
