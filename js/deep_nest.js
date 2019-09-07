@@ -1,4 +1,6 @@
-class PDF_Redirects {
+'use strict'
+
+class DeepNest {
   constructor(data_arr) {
     this.fs = require("fs-extra")
     this._from = []
@@ -39,7 +41,7 @@ class PDF_Redirects {
     return result_str
   }
 
-  get_nested_echo(dir_slugs, filename_w_ext, content) {
+  get_nested_index_echo(dir_slugs, filename_w_ext, content) {
     var result_str = 'echo '
     result_str += content
     result_str += ' > '
@@ -52,12 +54,12 @@ class PDF_Redirects {
     return result_str
   }
 
-  get_echo_lines(content_dir, filename_w_ext, content) {
+  get_nested_index_echoes(content_dir, filename_w_ext, content) {
     var result_str = ''
     var dir_slugs = ''
     this._from.forEach( (e) => {
       dir_slugs = this.get_dir_slugs(e, content_dir)
-      result_str += this.get_nested_echo(dir_slugs, filename_w_ext, content)
+      result_str += this.get_nested_index_echo(dir_slugs, filename_w_ext, content)
     })
     return result_str
   }
@@ -74,6 +76,4 @@ class PDF_Redirects {
 
 }
 
-
-
-module.exports = PDF_Redirects
+module.exports = DeepNest

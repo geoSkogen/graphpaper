@@ -1,6 +1,6 @@
 <?php
 
-class PDF_Redirects {
+class DeepNest {
 
   public $_from = array();
   public $_to = array();
@@ -20,6 +20,10 @@ class PDF_Redirects {
       array_push($result_arr, $url_indexed[$i]);
     }
     return $result_arr;
+  }
+
+  public function get_echo_redirect() {
+
   }
 
   public function get_mkdir_line($dir_slugs) {
@@ -42,7 +46,7 @@ class PDF_Redirects {
     return $result_str;
   }
 
-  public function get_nested_echo($dir_slugs,$filename_w_ext,$content) {
+  public function get_nested_index_echo($dir_slugs,$filename_w_ext,$content) {
     $result_str = 'echo ';
     $result_str .= $content;
     $result_str .= ' > ';
@@ -54,12 +58,12 @@ class PDF_Redirects {
     return $result_str;
   }
 
-  public function get_echo_lines($content_dir,$filename_w_ext,$content) {
+  public function get_nested_index_echoes($content_dir,$filename_w_ext,$content) {
     $result_str = "";
     $dir_slugs = "";
     foreach($this->_from as $old_url) {
       $dir_slugs = $this->get_dir_slugs($old_url,$content_dir);
-      $result_str .= $this->get_nested_echo($dir_slugs,$filename_w_ext,$content);
+      $result_str .= $this->get_nested_index_echo($dir_slugs,$filename_w_ext,$content);
       $result_str .= "\r\n";
     }
     return $result_str;
@@ -69,10 +73,6 @@ class PDF_Redirects {
     file_put_contents("../" . $dir_path . "/" . $filename . ".bat" , $export_str);
   }
 
-
-
 }
-
-
 
 ?>

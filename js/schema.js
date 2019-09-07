@@ -5,12 +5,12 @@ class Schema {
   }
 
   import_csv( import_filename, dir_path ) {
-    var buffer = new String
-    var slug_arr = new Array
-    var data_arr = new Array
-    var stage_obj = new Object
-    var export_arr = new Array
-    var keys = new Array
+    var buffer = ""
+    var slug_arr = []
+    var data_arr = []
+    var stage_obj = {}
+    var export_arr = []
+    var keys = []
     var data = this.fs.readFileSync('./' + dir_path + '/'+ import_filename + ".csv")
     for (var i = 0; i < data.length; i++) {
       buffer += String.fromCharCode(data[i])
@@ -62,8 +62,6 @@ class Schema {
     }
     return export_str
   }
-
-
 
   export_csv( export_str, filename, dir_path ) {
     var path = "../" + dir_path + "/" + filename + ".csv"
