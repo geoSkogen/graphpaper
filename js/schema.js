@@ -63,8 +63,10 @@ class Schema {
     return export_str
   }
 
+
+
   export_csv( export_str, filename, dir_path ) {
-    var path = "./" + dir_path + "/" + filename + ".csv"
+    var path = "../" + dir_path + "/" + filename + ".csv"
     this.fs.writeFile(path, export_str, function(err) {
       if(err) {
         return console.log(err)
