@@ -55,16 +55,21 @@ class DeepNest {
       $result_str .= '/';
     }
     $result_str .= $filename_w_ext;
+    $result_str .= "\r\n";
     return $result_str;
   }
 
   public function get_nested_index_echoes($content_dir,$filename_w_ext,$content) {
     $result_str = "";
     $dir_slugs = "";
-    foreach($this->_from as $old_url) {
+    $these_slugs = [];
+    foreach ($this->_from as $old_url) {
+      $these_slugs = [];
       $dir_slugs = $this->get_dir_slugs($old_url,$content_dir);
-      $result_str .= $this->get_nested_index_echo($dir_slugs,$filename_w_ext,$content);
-      $result_str .= "\r\n";
+      foreach ($dir_slugs as $slug) {
+        array_push($these_slugs,$slug);
+        $result_str .= $this->get_nested_index_echo($these_slugs,$filename_w_ext,$content);
+      }
     }
     return $result_str;
   }

@@ -57,9 +57,14 @@ class DeepNest {
   get_nested_index_echoes(content_dir, filename_w_ext, content) {
     var result_str = ''
     var dir_slugs = ''
-    this._from.forEach( (e) => {
-      dir_slugs = this.get_dir_slugs(e, content_dir)
-      result_str += this.get_nested_index_echo(dir_slugs, filename_w_ext, content)
+    var these_slugs = []
+    this._from.forEach( (url) => {
+      these_slugs = []
+      dir_slugs = this.get_dir_slugs(url, content_dir)
+      dir_slugs.forEach( (slug) => {
+        these_slugs.push(slug)
+        result_str += this.get_nested_index_echo(these_slugs, filename_w_ext, content)
+      })
     })
     return result_str
   }
