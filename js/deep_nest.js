@@ -62,6 +62,12 @@ class DeepNest {
       these_slugs = []
       dir_slugs = this.get_dir_slugs(url, content_dir)
       dir_slugs.forEach( (slug) => {
+        //dynamic content triage
+        /*
+        look into new data structure of filenames and content in order to outsource
+        calls to get_nested_index_echoes() like the one currently used in Main,
+        and route smarter objects' data into its arguments
+        */ 
         these_slugs.push(slug)
         result_str += this.get_nested_index_echo(these_slugs, filename_w_ext, content)
       })

@@ -22,10 +22,6 @@ class DeepNest {
     return $result_arr;
   }
 
-  public function get_echo_redirect() {
-
-  }
-
   public function get_mkdir_line($dir_slugs) {
     $result_str = 'mkdir ';
     $result_str .= '"';
@@ -63,11 +59,25 @@ class DeepNest {
     $result_str = "";
     $dir_slugs = "";
     $these_slugs = [];
-    foreach ($this->_from as $old_url) {
+    $num_key = -1;
+    $nest_level = -1;
+    foreach ($this->_from as $source_url) {
+      $num_key = array_search($source_url, $this->_from);
       $these_slugs = [];
-      $dir_slugs = $this->get_dir_slugs($old_url,$content_dir);
+      $dir_slugs = $this->get_dir_slugs($source_url,$content_dir);
       foreach ($dir_slugs as $slug) {
+        //dynamic content triage
+        /*
+        look into new data structure of filenames and content in order to outsource
+        calls to get_nested_index_echoes() like the one currently used in Main,
+        and route smarter objects' data into its arguments
+        */
+
         array_push($these_slugs,$slug);
+        /*
+        $nest_level = $dir_slugs - $these_slugs;
+        $document_obj = content.get_doc_by_nest_rule($nest_level, $this->_to[$num_key]);
+        */
         $result_str .= $this->get_nested_index_echo($these_slugs,$filename_w_ext,$content);
       }
     }

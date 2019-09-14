@@ -4,10 +4,14 @@ class Schema {
 
   public $data_index = array();
   public $data_assoc = array();
+  public $labeled_columns = array();
+  public $labeled_rows = array();
 
   function __construct($filename, $path) {
     $this->data_index = $this->import_csv_index($filename, $path);
     $this->data_assoc = $this->import_csv_assoc($filename, $path);
+    $this->labeled_columns = $this->get_labeled_columns($this->data_index);
+    $this->labeled_rows = $this->get_labeled_rows($this->data_index);
   }
 
   public function import_csv_index($filename, $path) {
@@ -53,6 +57,46 @@ class Schema {
       error_log('could not open file');
       return false;
     }
+  }
+
+  public function get_labeled_columns($data_arr) {
+    $keys = [];
+    $result = array();
+    for ($row_index = 0; $row_index < count($data_arr); $row_index++) {
+      for ($i = 0; $i < count($data_arr[$row_index]); $i++) {
+        if ($row_index === 0) {
+          $result[strval($data_arr[$row_index][$i])] = array();
+          array_push($keys, $data_arr[$row_index][$i]);
+        } else {
+          if ($data_arr[$row_index][$i]) {
+            array_push($result[$keys[$i]],$data_arr[$row_index][$i]);
+          }
+        }
+      }
+    }
+    return $result;
+  }
+
+  public function get_labeled_rows($data_arr) {
+    $key = "";
+    $valid_data = [];
+    $result = array();
+    for ($row_index = 0; $row_index < count($data_arr); $row_index++) {
+      for ($i = 0; $i < count($data_arr[$row_index]); $i++) {
+        $valid_data = [];
+        if ($i === 0) {
+          $key = strval($data_arr[$row_index][$i]);
+        } else {
+          if ($data_arr[$row_index][$i]) {
+            array_push($valid_data,$data_arr[$row_index][$i]);
+          }
+          if ($i === count($data_arr[$row_index])-1) {
+            $result[$key] = $valid_data;
+          }
+        }
+      }
+    }
+    return $result;
   }
 
   public function lookup_val($keyname, $id) {

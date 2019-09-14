@@ -15,3 +15,4 @@ this_nester.export_batch_commands(mkdir_export_str,'nesting','batch_files')
 this_nester.export_batch_commands(echo_export_str,'indexing','batch_files')
 
 //this_schema.export_csv( export_str, 'myexport', '../exports' )
+header("Location: http://lotuseaters/saturn_3/", true, 301);
