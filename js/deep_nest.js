@@ -54,22 +54,32 @@ class DeepNest {
     return result_str
   }
 
-  get_nested_index_echoes(content_dir, filename_w_ext, content) {
+  get_nested_index_echoes(content_obj) {
     var result_str = ''
     var dir_slugs = ''
     var these_slugs = []
+    var these_files = [false]
+    var these_cmds = [false]
+    var dir_key  = []
+    var nest_key = []
+    var filename_w_ext = ''
+    var content = ''
     this._from.forEach( (url) => {
+      dir_key = this._from.indexOf(url)
       these_slugs = []
-      dir_slugs = this.get_dir_slugs(url, content_dir)
+      dir_slugs = this.get_dir_slugs(url, content_obj._DIR)
       dir_slugs.forEach( (slug) => {
-        //dynamic content triage
-        /*
-        look into new data structure of filenames and content in order to outsource
-        calls to get_nested_index_echoes() like the one currently used in Main,
-        and route smarter objects' data into its arguments
-        */ 
         these_slugs.push(slug)
-        result_str += this.get_nested_index_echo(these_slugs, filename_w_ext, content)
+        nest_key = dir_slugs.indexOf(slug)
+        these_files = (content_obj._files[nest_key]) ?
+          content_obj._files[nest_key] : these_files
+        these_cmds = (content_obj._cmds[nest_key]) ?
+          content_obj._files[nest_key] : these_cmds
+        for (var i = 0; i < these_files.length; i++) {
+          filename_w_ext = content_obj.filename_builder(these_files[i])
+          content = content_obj.body_builder(these_cmds[i])
+          result_str += this.get_nested_index_echo(these_slugs,filename_w_ext,content)
+        }
       })
     })
     return result_str

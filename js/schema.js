@@ -31,7 +31,7 @@ class Schema {
     return { assoc: export_arr, index: data_arr }
   }
 
-  get_labeled_columns( data_arr ) {
+  static get_labeled_columns( data_arr ) {
     var keys =  []
     var result = []
     for (let row_index = 0; row_index < data_arr.length; row_index++) {
@@ -49,7 +49,7 @@ class Schema {
     return result
   }
 
-  get_labeled_rows( data_arr ) {
+  static get_labeled_rows( data_arr ) {
     var key = ''
     var valid_data = []
     var result = []
@@ -71,17 +71,36 @@ class Schema {
     return result
   }
 
-  lookup_val( keyname, index ) {
-    var result = false
-    var key_index = -1
-    if (index != 0) {
-      key_index = this.data.index[0].indexOf(keyname)
-      result = (key_index > -1) ? this.data.index[index][key_index] : result
+  static get_indexed_rows( data_arr ) {
+    var key = ''
+    var valid_data = []
+    var result = new Array
+    for (let row_index = 0; row_index < data_arr.length; row_index++) {
+      for (let i = 0; i  < data_arr[row_index].length; i++) {
+        valid_data = []
+        key = i
+        if (data_arr[row_index]) {
+          valid_data.push(data_arr[row_index])
+        }
+        if (i === data_arr[row_index].length-1) {
+          result[key] = valid_data
+        }
+      }
     }
     return result
   }
 
-  make_export_str( data ) {
+  table_lookup( col, row ) {
+    var result = false
+    if ( (col || col === 0) && (row || row === 0) ){
+      if (this.data.index[row][col]) {
+        result = this.data.index[row][col]
+      }
+    }
+    return result
+  }
+
+  static make_export_str( data ) {
     var export_str = new String
     var keys = new Array
     for (var i = 0; i < data.length; i++) {
@@ -103,7 +122,7 @@ class Schema {
     return export_str
   }
 
-  export_csv( export_str, filename, dir_path ) {
+  static export_csv( export_str, filename, dir_path ) {
     var path = "../" + dir_path + "/" + filename + ".csv"
     this.fs.writeFile(path, export_str, function(err) {
       if(err) {
