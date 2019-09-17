@@ -10,8 +10,6 @@ class Schema {
   function __construct($filename, $path) {
     $this->data_index = $this->import_csv_index($filename, $path);
     $this->data_assoc = $this->import_csv_assoc($filename, $path);
-    $this->labeled_columns = $this->get_labeled_columns($this->data_index);
-    $this->labeled_rows = $this->get_labeled_rows($this->data_index);
   }
 
   public function import_csv_index($filename, $path) {
@@ -59,7 +57,7 @@ class Schema {
     }
   }
 
-  public function get_labeled_columns($data_arr) {
+  public static function get_labeled_columns($data_arr) {
     $keys = [];
     $result = array();
     for ($row_index = 0; $row_index < count($data_arr); $row_index++) {
@@ -77,7 +75,7 @@ class Schema {
     return $result;
   }
 
-  public function get_labeled_rows($data_arr) {
+  public static function get_labeled_rows($data_arr) {
     $key = "";
     $valid_data = [];
     $result = array();
@@ -99,18 +97,36 @@ class Schema {
     return $result;
   }
 
-  public function lookup_val($keyname, $id) {
-    $result = false;
-    if ($id != 0) {
-      $key_index = array_search($keyname, $this->data_index[0]);
-      if ($key_index || $key_index === 0) {
-        $result = $this->data_index[$id][$key_index];
+  public static function get_indexed_rows($data_arr) {
+    $key = "";
+    $valid_data = [];
+    $result = array();
+    for ($row_index = 0; $row_index < count($data_arr); $row_index++) {
+      for ($i = 0; $i < count($data_arr[$row_index]); $i++) {
+        $valid_data = [];
+        $key = $i;
+        if ($data_arr[$row_index][$i]) {
+          array_push($valid_data,$data_arr[$row_index][$i]);
+        }
+        if ($i === count($data_arr[$row_index])-1) {
+          $result[$key] = $valid_data;
+        }
       }
     }
     return $result;
   }
 
-  public function make_export_str($data) {
+  public function table_lookup($col, $row) {
+    $result = false;
+    if ( ($col || $col === 0) && ($row || $row === 0) ){
+      if ($this->data_index[$row][$col]) {
+        $result = $this->data_index[$row][$col];
+      }
+    }
+    return $result;
+  }
+
+  public static function make_export_str($data) {
     $export_str = "";
     $keys = array();
     for ($i = 0; $i < count($data); $i++) {
@@ -125,7 +141,7 @@ class Schema {
     return $export_str;
   }
 
-  public function export_csv($export_str, $filename, $dir_path) {
+  public static function export_csv($export_str, $filename, $dir_path) {
     file_put_contents("../" . $dir_path . "/" . $filename . ".csv" , $export_str);
   }
 

@@ -55,30 +55,28 @@ class DeepNest {
     return $result_str;
   }
 
-  public function get_nested_index_echoes($content_dir,$filename_w_ext,$content) {
+  public function get_nested_index_echoes($content_obj) {
     $result_str = "";
-    $dir_slugs = "";
+    $dir_slugs = [];
     $these_slugs = [];
-    $num_key = -1;
-    $nest_level = -1;
+    $dir_key = -1;
+    $nest_key = -1;
     foreach ($this->_from as $source_url) {
-      $num_key = array_search($source_url, $this->_from);
+      $dir_key = array_search($source_url, $this->_from);
       $these_slugs = [];
-      $dir_slugs = $this->get_dir_slugs($source_url,$content_dir);
+      $dir_slugs = $this->get_dir_slugs($source_url,$content_obj->_DIR);
       foreach ($dir_slugs as $slug) {
-        //dynamic content triage
-        /*
-        look into new data structure of filenames and content in order to outsource
-        calls to get_nested_index_echoes() like the one currently used in Main,
-        and route smarter objects' data into its arguments
-        */
-
         array_push($these_slugs,$slug);
-        /*
-        $nest_level = $dir_slugs - $these_slugs;
-        $document_obj = content.get_doc_by_nest_rule($nest_level, $this->_to[$num_key]);
-        */
-        $result_str .= $this->get_nested_index_echo($these_slugs,$filename_w_ext,$content);
+        $nest_key = array_search($slug, $dir_slugs);
+        $these_files = ($content_obj->_files[$nest_key]) ?
+          $content_obj->_files[$nest_key] : [false];
+        $these_cmds = ($content_obj->_cmds[$nest_key]) ?
+          $content_obj->_cmds[$nest_key] : [false];
+        for ($i = 0; $i < count($these_files); $i++) {
+          $filename_w_ext = $content_obj->filename_builder($these_files[$i]);
+          $content = $content_obj->body_builder($these_cmds[$i]);
+          $result_str .= $this->get_nested_index_echo($these_slugs,$filename_w_ext,$content);
+        }
       }
     }
     return $result_str;
