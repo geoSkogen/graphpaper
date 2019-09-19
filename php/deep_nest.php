@@ -35,8 +35,8 @@ class DeepNest {
 
   public function get_mkdir_lines($content_dir) {
     $result_str = "";
-    foreach($this->_from as $old_url) {
-      $result_str .= $this->get_mkdir_line($this->get_dir_slugs($old_url,$content_dir));
+    foreach($this->_from as $url) {
+      $result_str .= $this->get_mkdir_line($this->get_dir_slugs($url,$content_dir));
       $result_str .= "\r\n";
     }
     return $result_str;

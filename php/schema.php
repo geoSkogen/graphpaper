@@ -126,16 +126,12 @@ class Schema {
     return $result;
   }
 
-  public static function make_export_str($data) {
+  public static function make_export_str($data_table) {
     $export_str = "";
-    $keys = array();
-    for ($i = 0; $i < count($data); $i++) {
-      $keys = array_keys($data[$i]);
-      for ($ii = 0; $ii < count($keys); $ii++) {
-        $export_str .= $keys[$ii];
-        $export_str .= ",";
-        $export_str .= $data[$i][$keys[$ii]];
-        $export_str .= ($ii === count($keys)-1) ? "\r\n" : ",";
+    foreach ($data_table as $data_row) {
+      for ($i = 0; $i < count($data_row); $i++) {
+        $export_str .= $data_row[$i];
+        $export_str .= ($i === count($data_row)-1) ? "\r\n" : ",";
       }
     }
     return $export_str;

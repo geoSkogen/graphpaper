@@ -4,7 +4,18 @@ require 'schema.php';
 require 'deep_nest.php';
 require 'content_monster.php';
 
-$this_schema = new Schema('url-data', '../records');
+$this_schema = new Schema('locales-ltd', '../records');
+$search_count = 0;
+$new_csv_arr = array();
+foreach($this_schema->data_index as $row) {
+  if (is_numeric($row[1])) {
+    $search_count++;
+    $new_csv_arr[] = $row;
+  }
+}
+$this_str = Schema::make_export_str($new_csv_arr);
+Schema::export_csv($this_str,'locales-ltd-zip','exports');
+/*
 $cmd_schema = new Schema('cmds-data', '../records');
 $c_monster = new ContentMonster(
   $cmd_schema->data_index,
@@ -18,5 +29,5 @@ $mkdir_export_str = $this_nester->get_mkdir_lines($c_monster->_DIR);
 $echo_export_str = $this_nester->get_nested_index_echoes($c_monster);
 $this_nester->export_batch_commands($mkdir_export_str,'nesting','batch_files');
 $this_nester->export_batch_commands($echo_export_str,'indexing','batch_files');
-
+*/
 ?>
