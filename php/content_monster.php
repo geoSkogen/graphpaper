@@ -8,7 +8,7 @@ class ContentMonster {
   public $_default_body = '';
   public $_DIR = '';
 
-  function __construct($cmd_table,$filename_table,$format,$default_tx,$content_dir) {
+  function __construct($cmd_table,$filename_table,$format,$default_txt,$content_dir) {
     $this->_cmds = Schema::get_indexed_rows($cmd_table);
     $this->_files = Schema::get_indexed_rows($filename_table);
     $this->_format = $format;

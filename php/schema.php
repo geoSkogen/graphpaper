@@ -9,7 +9,7 @@ class Schema {
 
   function __construct($filename, $path) {
     $this->data_index = $this->import_csv_index($filename, $path);
-    $this->data_assoc = $this->import_csv_assoc($filename, $path);
+    //$this->data_assoc = $this->make_assoc($filename, $path);
   }
 
   public function import_csv_index($filename, $path) {
@@ -27,29 +27,13 @@ class Schema {
     }
   }
 
-  public function import_csv_assoc($filename, $path) {
+  public function make_assoc() {
     $row_index = 0;
     $cell_index = 0;
     $keys = array();
     $result = array();
     $labeled_data = array();
-    if (($handle = fopen(__DIR__ . "/" . $path . "/" . $filename . ".csv", "r")) !== FALSE) {
-      while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-        if ($row_index === 0) {
-            foreach ($data as $key) {
-              $keys[] = $key;
-            }
-        } else {
-          foreach ($data as $item) {
-            if ($cell_index === sizeof($data))  { $cell_index = 0; }
-            $labeled_data[$keys[$cell_index]] = $item;
-            $cell_index++;
-          }
-          array_push($result, $labeled_data);
-        }
-        $row_index++;
-      }
-      fclose($handle);
+    if (true) {
       return $result;
     } else {
       error_log('could not open file');

@@ -4,17 +4,61 @@ require 'schema.php';
 require 'deep_nest.php';
 require 'content_monster.php';
 
-$this_schema = new Schema('locales-ltd', '../records');
-$search_count = 0;
-$new_csv_arr = array();
-foreach($this_schema->data_index as $row) {
-  if (is_numeric($row[1])) {
-    $search_count++;
-    $new_csv_arr[] = $row;
+$this_schema = new Schema('geo2-csvnest-row', '../records');
+$arr = $this_schema->data_index;
+$i = 0;
+$base_url = "'https://ehrlich-ne.pestcontroloffers.com/home/";
+$buffalo = [];
+$pittsburgh = [];
+$reading = [];
+$baltimore = [];
+$arundel = [];
+$result = array();
+$col = "";
+$keys = [];
+
+foreach ($arr as $row) {
+  $url_w_query = $base_url . "?location=" . $row[0] . "',";
+  switch($row[3]) {
+    case 'Baltimore North Pest':      $baltimore[] = $url_w_query;
+      break;
+    case 'Arundel / Biddeford Atlantic Pest':
+      $arundel[] = $url_w_query;
+      break;
+    case 'Buffalo Pest':
+      $buffalo[] = $url_w_query;
+      break;
+    case 'Reading Pest':
+      $reading[] = $url_w_query;
+      break;
+    case 'Pittsburgh Pest':
+      $pittsburgh[] = $url_w_query;
+      break;
   }
+  $i++;
 }
-$this_str = Schema::make_export_str($new_csv_arr);
-Schema::export_csv($this_str,'locales-ltd-zip','exports');
+$result = array(
+  'baltimore' => $baltimore,
+  'arundel' => $arundel,
+  'buffalo' => $buffalo,
+  'reading' => $reading,
+  'pittsburgh'=> $pittsburgh
+);
+$keys = array_keys($result);
+foreach ($keys as $key) {
+  for ($i = 0 ; $i < count($result[$key]); $i++) {
+    $col .= $result[$key][$i] . "\r\n";
+  }
+  file_put_contents("../" . "exports" . "/" . $key . ".txt" , $col);
+}
+
+
+/*
+foreach($this_schema->data_index as $row) {
+}
+*/
+//$this_str = Schema::make_export_str($new_csv_arr);
+//Schema::export_csv($this_str,'locales-ltd-zip','exports');
 /*
 $cmd_schema = new Schema('cmds-data', '../records');
 $c_monster = new ContentMonster(
