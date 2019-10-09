@@ -1,134 +1,53 @@
 <?php
 
 require 'schema.php';
-require 'deep_nest.php';
-require 'content_monster.php';
+//require 'deep_nest.php';
+//require 'content_monster.php';
 
 $new_schema = [];
 $new_row = [];
-$this_schema = new Schema('criteria-ids-ltd', '../records');
-$zip_schema = new Schema('zipcodes', '../records');
-$zip_lookup = array('zips'=>[], 'names'=>[]);
-$index = '';
-$found_name = '';
-$zip_not_found = [];
+$this_schema = new Schema('mni-map', '../records');
+$map_cols = Schema::get_labeled_columns($this_schema->data_index);
 
-foreach($zip_schema->data_index as $zip_row) {
-  $zip_lookup['zips'][] = $zip_row[0];
-  $zip_lookup['names'][] = ucwords(strtolower($zip_row[1]));
-}
-foreach ($this_schema->data_index as $data_row) {
-  $region = '';
-  $new_row = [];
-  if (is_numeric($data_row[1])) {
-    if ( array_search($data_row[1],$zip_lookup['zips']) ||
-      array_search($data_row[1],$zip_lookup['zips']) === 0) {
-      $index = array_search($data_row[1],$zip_lookup['zips']);
-      $found_name =  $zip_lookup['names'][$index];
-      $new_row = array(
-        $data_row[0],
-        $found_name,
-        $data_row[2],
-        $data_row[3],
-        $data_row[4],
-        $data_row[5],
-        $data_row[6],
-        $data_row[7],
-        $data_row[8],
-      );
-      array_push($new_schema,$new_row);
-    } else {
-      $zip_not_found[] = $data_row[1];
-    }
-  } else {
-    array_push($new_schema,$data_row);
-  }
+$my_domain = "https://mynewimage.net";
 
-  /*
-  switch($data_row[3]) {
-    case 'Baltimore North Pest':
-    case 'Arundel / Biddeford Atlantic Pest':
-    case 'Buffalo Pest':
-    case 'Reading Pest':
-    case 'Pittsburgh Pest':
-      $region = 'Northeast';
-      break;
-    case 'Virginia':
-      $region = 'Southeast';
-      break;
-  }
-  $new_row = array(
-    $data_row[0],
-    $data_row[1],
-    $data_row[2],
-    $data_row[3],
-    $data_row[4],
-    $region,
-    $data_row[5]
+function get_tree($domain, $url_col) {
+  $patts = array(
+    'cc' => '/^\/[a-z|\-]+\/$/',
+    'child' => '/^\/([a-z|\-]+\/){2}$/',
+    'g_child' => '/^\/([a-z|\-]+\/){3}$/',
   );
-  */
+  $map =  array(
+    'cc' => [],
+    'child' => [],
+    'g_child' => [],
+  );
+  $urls = [];
+  $keys = array_keys($patts);
+  foreach($url_col as $url) {
+    $urls[] = str_replace($domain,'',$url);
+  }
+  foreach($urls as $url) {
+    foreach($keys as $key) {
+      $test = preg_match($patts[$key],$url,$matches);
+      if ($test) {
+        $map[$key][] = $url;
+      }
+    }
+  }
+  return $map;
 }
-error_log('not found :' . strval(count($zip_not_found)));
-error_log(var_dump($zip_not_found));
+
+function get_nest($map) {
+  $depth = 0;
+}
+
+$map = get_tree($my_domain,$map_cols["URL"]);
+error_log(var_dump($map));
+
 $str = Schema::make_export_str($new_schema);
-Schema::export_csv($str,'criteria-ids-ltd-nozip','exports');
+Schema::export_csv($str,'struct','exports');
 
-/*
-$this_schema = new Schema('geo3-csvnest-row', '../records');
-$arr = $this_schema->data_index;
-$i = 0;
-$base_url = "'https://wordpress_1/page/";
-$buffalo = [];
-$pittsburgh = [];
-$reading = [];
-$baltimore = [];
-$arundel = [];
-$result = array();
-$col = "";
-$keys = [];
-
-foreach ($arr as $row) {
-  $url_w_query = $base_url . "?location=" . $row[0] . "',";
-  switch($row[3]) {
-    case 'Baltimore North Pest':      $baltimore[] = $url_w_query;
-      break;
-    case 'Arundel / Biddeford Atlantic Pest':
-      $arundel[] = $url_w_query;
-      break;
-    case 'Buffalo Pest':
-      $buffalo[] = $url_w_query;
-      break;
-    case 'Reading Pest':
-      $reading[] = $url_w_query;
-      break;
-    case 'Pittsburgh Pest':
-      $pittsburgh[] = $url_w_query;
-      break;
-  }
-  $i++;
-}
-$result = array(
-  'baltimore' => $baltimore,
-  'arundel' => $arundel,
-  'buffalo' => $buffalo,
-  'reading' => $reading,
-  'pittsburgh'=> $pittsburgh
-);
-$keys = array_keys($result);
-foreach ($keys as $key) {
-  for ($i = 0 ; $i < count($result[$key]); $i++) {
-    $col .= $result[$key][$i] . "\r\n";
-  }
-  file_put_contents("../" . "exports" . "/" . $key . ".txt" , $col);
-}
-*/
-
-/*
-foreach($this_schema->data_index as $row) {
-}
-*/
-//$this_str = Schema::make_export_str($new_csv_arr);
-//Schema::export_csv($this_str,'locales-ltd-zip','exports');
 /*
 $cmd_schema = new Schema('cmds-data', '../records');
 $c_monster = new ContentMonster(
