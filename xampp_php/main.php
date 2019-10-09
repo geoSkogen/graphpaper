@@ -12,33 +12,30 @@ $map_cols = Schema::get_labeled_columns($this_schema->data_index);
 $my_domain = "https://mynewimage.net";
 
 function get_tree($domain, $url_col) {
-  $patts = array(
-    'cc' => '/^\/[a-z|\-]+\/$/',
-    'child' => '/^\/([a-z|\-]+\/){2}$/',
-    'g_child' => '/^\/([a-z|\-]+\/){3}$/',
-  );
-  $map =  array(
-    'cc' => [],
-    'child' => [],
-    'g_child' => [],
-  );
   $urls = [];
-  $keys = array_keys($patts);
+  $slug_arr = [];
+  $map = [];
+  $range = 0;
   foreach($url_col as $url) {
     $urls[] = str_replace($domain,'',$url);
   }
-  foreach($urls as $url) {
-    foreach($keys as $key) {
-      $test = preg_match($patts[$key],$url,$matches);
-      if ($test) {
-        $map[$key][] = $url;
+  for ($i = 0; $i < count($urls); $i++) {
+    $slug_arr = explode('/',$urls[$i]);
+    if (count($slug_arr) > 2) {
+      $range = ( count($slug_arr)-2 > $range) ? count($slug_arr)-2 : $range;
+      if ($map[count($slug_arr)-3]) {
+        $map[count($slug_arr)-3][] = $urls[$i];
+      } else {
+        $map[count($slug_arr)-3] = [$urls[$i]];
       }
     }
   }
+  $map['range'] = $range;
   return $map;
 }
 
 function get_nest($map) {
+  $nest = [];
   $depth = 0;
 }
 
