@@ -21,28 +21,75 @@ function get_tree($domain, $url_col) {
   }
   for ($i = 0; $i < count($urls); $i++) {
     $slug_arr = explode('/',$urls[$i]);
-    if (count($slug_arr) > 2) {
-      $range = ( count($slug_arr)-2 > $range) ? count($slug_arr)-2 : $range;
-      if ($map[count($slug_arr)-3]) {
-        $map[count($slug_arr)-3][] = $urls[$i];
+    array_splice($slug_arr,0,1);
+    array_splice($slug_arr,-1,1);
+    if (count($slug_arr)) {
+      if ($map[count($slug_arr)]) {
+        $map[count($slug_arr)][] = $slug_arr;
       } else {
-        $map[count($slug_arr)-3] = [$urls[$i]];
+        $map[count($slug_arr)] = [$slug_arr];
       }
     }
   }
-  $map['range'] = $range;
   return $map;
 }
 
+function page_array_sequence($map) {
+  $new_map = [];
+  foreach ( $map[1] as $tier_1_url) {
+    $new_map[] = $tier_1_url;
+    for ($i = 2; $i < count($map); $i++) {
+      foreach($map[$i] as $tier_i_url) {
+        $newest_url_index = count($new_map)-1;
+        $newest_url_length = count($new_map[$newest_url_index]);
+        $newest_slug_index = $newest_url_length-1;
+        $test_slug_index = ($newest_url_length === $i) ?
+          $newest_slug_index-1 : $newest_slug_index;
+
+        if ( $tier_i_url[count($tier_i_url)-2] ===
+          $new_map[$newest_url_index][$test_slug_index] ) {
+            $new_map[] = $tier_i_url;
+        }
+      }
+    }
+  }
+  return $new_map;
+}
+
+function urls_from_arrays($domain,$url_arrs) {
+  $table = [];
+  foreach ($url_arrs as $url_arr) {
+    $table[] = [$domain . '/' . join('/', $url_arr)];
+  }
+  return $table;
+}
+
+function repeat_me($str,$int) {
+  $result = "";
+  for ($i = 0; $i < $int; $i++) {
+    $result .= ",";
+  }
+  return $result;
+}
+
+function get_nested_csv_line($depth,$arg,$range) {
+  $str = repeat_me(',',$depth);
+  $str .= $arg;
+  $str .= repeat_me(',' ,($range-$depth-1) );
+  $str .= "\r\n";
+  return $str;
+}
+
 function get_nest($map) {
-  $nest = [];
-  $depth = 0;
+  $line = get_nested_csv_line(0,'/',5);
+  error_log($line);
 }
 
 $map = get_tree($my_domain,$map_cols["URL"]);
-error_log(var_dump($map));
-
-$str = Schema::make_export_str($new_schema);
+$page_arr = page_array_sequence($map);
+error_log(strval(count($page_arr)));
+$hrefs = urls_from_arrays($my_domain,$page_arr);
+$str = Schema::make_export_str($hrefs);
 Schema::export_csv($str,'struct','exports');
 
 /*
