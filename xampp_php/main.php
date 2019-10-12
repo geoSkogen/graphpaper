@@ -38,14 +38,13 @@ function page_array_sequence($map) {
   $new_map = [];
   foreach ( $map[1] as $tier_1_url) {
     $new_map[] = $tier_1_url;
-    for ($i = 2; $i < count($map); $i++) {
+    for ($i = 2; $i < count($map)+1; $i++) {
       foreach($map[$i] as $tier_i_url) {
         $newest_url_index = count($new_map)-1;
         $newest_url_length = count($new_map[$newest_url_index]);
         $newest_slug_index = $newest_url_length-1;
         $test_slug_index = ($newest_url_length === $i) ?
           $newest_slug_index-1 : $newest_slug_index;
-
         if ( $tier_i_url[count($tier_i_url)-2] ===
           $new_map[$newest_url_index][$test_slug_index] ) {
             $new_map[] = $tier_i_url;
@@ -75,22 +74,30 @@ function repeat_me($str,$int) {
 function get_nested_csv_line($depth,$arg,$range) {
   $str = repeat_me(',',$depth);
   $str .= $arg;
-  $str .= repeat_me(',' ,($range-$depth-1) );
+  $str .= repeat_me(',', ($range-$depth-1) );
   $str .= "\r\n";
   return $str;
 }
 
-function get_nest($map) {
-  $line = get_nested_csv_line(0,'/',5);
-  error_log($line);
+function get_csv_nest($table, $nest_range) {
+  $csv_str = get_nested_csv_line(0,'/',$nest_range);
+  foreach($table as $slug_arr) {
+    $nest_index = count($slug_arr)-1;
+    $slug =  '/' . $slug_arr[$nest_index] . '/';
+    $line = get_nested_csv_line($nest_index,$slug,$nest_range);
+    $csv_str .= $line;
+  }
+  return $csv_str;
 }
 
 $map = get_tree($my_domain,$map_cols["URL"]);
 $page_arr = page_array_sequence($map);
-error_log(strval(count($page_arr)));
 $hrefs = urls_from_arrays($my_domain,$page_arr);
-$str = Schema::make_export_str($hrefs);
-Schema::export_csv($str,'struct','exports');
+$map_str = Schema::make_export_str($hrefs);
+$struct_str = get_csv_nest($page_arr,count($map));
+Schema::export_csv($map_str,'map','exports');
+Schema::export_csv($struct_str,'struct','exports');
+
 
 /*
 $cmd_schema = new Schema('cmds-data', '../records');

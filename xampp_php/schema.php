@@ -28,6 +28,8 @@ class Schema {
   }
 
   public function make_assoc() {
+    //this doesn't do anything yet.
+    //replace with get_labeled_cells(?)
     $row_index = 0;
     $cell_index = 0;
     $keys = array();
@@ -82,6 +84,8 @@ class Schema {
   }
 
   public static function get_indexed_rows($data_arr) {
+    //this is a completely rhetorical exercise as far as I can see -
+    //the argument and the return value are the same 
     $key = "";
     $valid_data = [];
     $result = array();
