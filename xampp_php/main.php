@@ -11,34 +11,38 @@ $map_cols = Schema::get_labeled_columns($this_schema->data_index);
 
 $my_domain = "https://mynewimage.net";
 
-function get_tree($domain, $url_col) {
-  $urls = [];
+function get_path_arrs($domain, $url_col) {
+  $uris = [];
   $slug_arr = [];
-  $map = [];
-  $range = 0;
   foreach($url_col as $url) {
-    $urls[] = str_replace($domain,'',$url);
-  }
-  for ($i = 0; $i < count($urls); $i++) {
-    $slug_arr = explode('/',$urls[$i]);
+    $slug_arr = explode( '/', str_replace($domain,'',$url) );
     array_splice($slug_arr,0,1);
     array_splice($slug_arr,-1,1);
+    $uris[] = $slug_arr;
+  }
+  return $uris;
+}
+
+function get_branches($paths) {
+  $branches = [];
+  foreach ($paths as $slug_arr) {
     if (count($slug_arr)) {
-      if ($map[count($slug_arr)]) {
-        $map[count($slug_arr)][] = $slug_arr;
+      if ($branches[count($slug_arr)]) {
+        $branches[count($slug_arr)][] = $slug_arr;
       } else {
-        $map[count($slug_arr)] = [$slug_arr];
+        $branches[count($slug_arr)] = [$slug_arr];
       }
     }
   }
-  return $map;
+  $branches[0] = '/';
+  return $branches;
 }
 
 function page_array_sequence($map) {
   $new_map = [];
   foreach ( $map[1] as $tier_1_url) {
     $new_map[] = $tier_1_url;
-    for ($i = 2; $i < count($map)+1; $i++) {
+    for ($i = 2; $i < count($map); $i++) {
       foreach($map[$i] as $tier_i_url) {
         $newest_url_index = count($new_map)-1;
         $newest_url_length = count($new_map[$newest_url_index]);
@@ -55,10 +59,46 @@ function page_array_sequence($map) {
   return $new_map;
 }
 
+function get_table($branches, $uris) {
+  $table = [];
+  $diff = 0;
+  foreach( $uris as $uri ) {
+    if ( count($uri) != count($branches) ) {
+      $diff = count($branches) - count($uri);
+      for ($i = 0; $i < $diff; $i++) {
+        $uri[] = '';
+      }
+    }
+    $table[] = $uri;
+  }
+  return $table;
+}
+
+function nest_dirs($path_arrs, $tier_1_arrs) {
+  $new_table = [];
+  $dir_depth = 0;
+  
+  foreach( $tier_1_arrs as $tier_1_arr ) {
+    $dir_depth = get_dir_depth($tier_1_arr[0],$path_arrs);
+  }
+  return $new_table;
+}
+
+function get_dir_depth($slug,$path_arrs) {
+  $result = 0;
+  foreach($path_arrs as $path_arr) {
+    $result = (
+      ($path_arr[0] === $slug) &&
+      (count($path_arr) > $result)
+      )? count($path_arr) : $result;
+  }
+  return $result;
+}
+
 function urls_from_arrays($domain,$url_arrs) {
   $table = [];
   foreach ($url_arrs as $url_arr) {
-    $table[] = [$domain . '/' . join('/', $url_arr)];
+    $table[] = $domain . '/' . join('/', $url_arr) . '/';
   }
   return $table;
 }
@@ -90,15 +130,23 @@ function get_csv_nest($table, $nest_range) {
   return $csv_str;
 }
 
-$map = get_tree($my_domain,$map_cols["URL"]);
-$page_arr = page_array_sequence($map);
+$paths = get_path_arrs($my_domain,$map_cols["URL"]);
+$branches = get_branches($paths);
+$table = get_table($branches,$paths);
+$page_arr = page_array_sequence($branches);
 $hrefs = urls_from_arrays($my_domain,$page_arr);
 $map_str = Schema::make_export_str($hrefs);
-$struct_str = get_csv_nest($page_arr,count($map));
+$struct_str = get_csv_nest($page_arr,count($branches));
 Schema::export_csv($map_str,'map','exports');
 Schema::export_csv($struct_str,'struct','exports');
 
 
+error_log(print_r($table));
+
+
+
+//error_log(print_r($map_cols["URL"]));
+//error_log(print_r($hrefs));
 /*
 $cmd_schema = new Schema('cmds-data', '../records');
 $c_monster = new ContentMonster(
