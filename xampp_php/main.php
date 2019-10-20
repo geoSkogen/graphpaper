@@ -3,26 +3,16 @@
 require 'schema.php';
 //require 'deep_nest.php';
 //require 'content_monster.php';
-
-$new_schema = [];
-$new_row = [];
+/*
+//Declare & Import
+*/
+$new_map = [];
 $this_schema = new Schema('mni-map', '../records');
 $map_cols = Schema::get_labeled_columns($this_schema->data_index);
-
 $my_domain = "https://mynewimage.net";
-
-function get_path_arrs($domain, $url_col) {
-  $uris = [];
-  $slug_arr = [];
-  foreach($url_col as $url) {
-    $slug_arr = explode( '/', str_replace($domain,'',$url) );
-    array_splice($slug_arr,0,1);
-    array_splice($slug_arr,-1,1);
-    $uris[] = $slug_arr;
-  }
-  return $uris;
-}
-
+/*
+//Data Processing
+*/
 function get_branches($paths) {
   $branches = [];
   foreach ($paths as $slug_arr) {
@@ -59,6 +49,96 @@ function page_array_sequence($map) {
   return $new_map;
 }
 
+function get_nested_page_arr($map) {
+  global $new_map;
+
+  function parent_find_child($this_root,$this_slug,$this_tier,$map) {
+    global $new_map;
+    $child_dirs = is_parent_dir_of($this_root,$this_slug,$this_tier,$map);
+    /*
+    error_log('this slug child dirs: ' . $this_slug);
+    error_log('this root child dirs: ' . $this_root);
+    error_log('this tier child dirs: ' . strval($this_tier));
+    */
+    if (count($child_dirs)) {
+      //error_log('got match');
+      foreach($child_dirs as $child_dir) {
+        $new_map[] = $child_dir;
+        //error_log('child dir test slug: ' . $child_dir[$this_tier]);
+        if (isset($map[$this_tier+1])) {
+          parent_find_child($this_root,$child_dir[$this_tier],$this_tier+1,$map);
+        }
+      }
+    }
+    //return;
+  }
+
+  $roots = $map[1];
+  $depth = 0;
+  foreach($roots as $root) {
+    $root_slug = $root[0];
+    $this_slug = $root_slug;
+    //$depth = get_dir_depth($root_slug,$map);
+    /*
+    error_log("\r\nroot:");
+    error_log($root[0]);
+    error_log("depth:");
+    error_log($depth);
+    */
+    $new_map[] = $root;
+    parent_find_child($root_slug,$this_slug,1,$map);
+  }
+  return $new_map;
+}
+/*
+//Utilities
+*/
+function is_parent_dir_of($root,$slug,$slug_tier,$branches) {
+  $result = [];
+  if ($branches[$slug_tier+1]) {
+    foreach ($branches[$slug_tier+1] as $uri) {
+      /*
+      error_log('branch: ' . strval($slug_tier+1));
+      error_log(var_dump($uri));
+      error_log('is_parent?: ' . $uri[$slug_tier-1]);
+      error_log('root:' . $uri[0]);
+      */
+      if ($uri[$slug_tier-1] === $slug && $uri[0] === $root) {
+        $result[] = $uri;
+      }
+    }
+  }
+  return $result;
+}
+
+function get_path_arrs($domain, $url_col) {
+  $uris = [];
+  $slug_arr = [];
+  $dirs = [];
+  foreach($url_col as $url) {
+    $slug_arr = explode( '/', str_replace($domain,'',$url) );
+    array_splice($slug_arr,0,1);
+    array_splice($slug_arr,-1,1);
+
+    $uris[] = $slug_arr;
+
+  }
+  return $uris;
+}
+
+function get_dir_depth($slug,$map) {
+  $result = -1;
+  for ($i = count($map)-1; $i > 0; $i--) {
+    foreach($map[$i] as $slug_arr) {
+      if ($slug_arr[0] === $slug) {
+        $result = ($i > $result) ? $i : $result;
+        break;
+      }
+    }
+  }
+  return $result;
+}
+
 function get_table($branches, $uris) {
   $table = [];
   $diff = 0;
@@ -74,27 +154,6 @@ function get_table($branches, $uris) {
   return $table;
 }
 
-function nest_dirs($path_arrs, $tier_1_arrs) {
-  $new_table = [];
-  $dir_depth = 0;
-  
-  foreach( $tier_1_arrs as $tier_1_arr ) {
-    $dir_depth = get_dir_depth($tier_1_arr[0],$path_arrs);
-  }
-  return $new_table;
-}
-
-function get_dir_depth($slug,$path_arrs) {
-  $result = 0;
-  foreach($path_arrs as $path_arr) {
-    $result = (
-      ($path_arr[0] === $slug) &&
-      (count($path_arr) > $result)
-      )? count($path_arr) : $result;
-  }
-  return $result;
-}
-
 function urls_from_arrays($domain,$url_arrs) {
   $table = [];
   foreach ($url_arrs as $url_arr) {
@@ -102,7 +161,9 @@ function urls_from_arrays($domain,$url_arrs) {
   }
   return $table;
 }
-
+/*
+//CSV Formatting
+*/
 function repeat_me($str,$int) {
   $result = "";
   for ($i = 0; $i < $int; $i++) {
@@ -129,24 +190,18 @@ function get_csv_nest($table, $nest_range) {
   }
   return $csv_str;
 }
-
+/*
+Execution
+*/
 $paths = get_path_arrs($my_domain,$map_cols["URL"]);
 $branches = get_branches($paths);
-$table = get_table($branches,$paths);
-$page_arr = page_array_sequence($branches);
+//$table = get_table($branches,$paths);
+$page_arr = get_nested_page_arr($branches);
 $hrefs = urls_from_arrays($my_domain,$page_arr);
 $map_str = Schema::make_export_str($hrefs);
 $struct_str = get_csv_nest($page_arr,count($branches));
 Schema::export_csv($map_str,'map','exports');
 Schema::export_csv($struct_str,'struct','exports');
-
-
-error_log(print_r($table));
-
-
-
-//error_log(print_r($map_cols["URL"]));
-//error_log(print_r($hrefs));
 /*
 $cmd_schema = new Schema('cmds-data', '../records');
 $c_monster = new ContentMonster(
