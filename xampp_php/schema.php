@@ -85,7 +85,7 @@ class Schema {
 
   public static function get_indexed_rows($data_arr) {
     //this is a completely rhetorical exercise as far as I can see -
-    //the argument and the return value are the same 
+    //the argument and the return value are the same
     $key = "";
     $valid_data = [];
     $result = array();
@@ -118,7 +118,7 @@ class Schema {
     $export_str = "";
     foreach ($data_table as $data_row) {
       for ($i = 0; $i < count($data_row); $i++) {
-        $export_str .= $data_row[$i];
+        $export_str .= '"' . $data_row[$i] . '"';
         $export_str .= ($i === count($data_row)-1) ? "\r\n" : ",";
       }
     }

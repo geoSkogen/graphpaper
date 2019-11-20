@@ -6,98 +6,33 @@ require 'schema.php';
 
 $new_schema = [];
 $new_row = [];
-$this_schema = new Schema('mni-map', '../records');
-$map_cols = Schema::get_labeled_columns($this_schema->data_index);
+$zip_index = -1;
+$place_name = '';
+$crit_schema = new Schema('criteria-ids', '../records');
+$zip_schema = new Schema('zipcodes', '../records');
 
-$my_domain = "https://mynewimage.net";
+$crit_table = $crit_schema->data_index;
 
-function get_tree($domain, $url_col) {
-  $urls = [];
-  $slug_arr = [];
-  $map = [];
-  $range = 0;
-  foreach($url_col as $url) {
-    $urls[] = str_replace($domain,'',$url);
-  }
-  for ($i = 0; $i < count($urls); $i++) {
-    $slug_arr = explode('/',$urls[$i]);
-    array_splice($slug_arr,0,1);
-    array_splice($slug_arr,-1,1);
-    if (count($slug_arr)) {
-      if ($map[count($slug_arr)]) {
-        $map[count($slug_arr)][] = $slug_arr;
-      } else {
-        $map[count($slug_arr)] = [$slug_arr];
-      }
+$zip_table = $zip_schema->data_index;
+$zip_cols = Schema::get_labeled_columns($zip_table);
+
+foreach($crit_table as $crit_row) {
+  if ($crit_row[4] === 'US') {
+    if ($crit_row[5] === 'Postal Code') {
+      $zip_index = array_search($crit_row[1],$zip_cols['Zipcode']);
+      $place_name = $zip_cols['City'][$zip_index];
+      //error_log($place_name);
+      $new_row = $crit_row;
+      $new_row[1] = ucwords(strtolower($place_name));
+    } else {
+      $new_row = $crit_row;
     }
+    $new_schema[] = $new_row;
   }
-  return $map;
 }
 
-function page_array_sequence($map) {
-  $new_map = [];
-  foreach ( $map[1] as $tier_1_url) {
-    $new_map[] = $tier_1_url;
-    for ($i = 2; $i < count($map)+1; $i++) {
-      foreach($map[$i] as $tier_i_url) {
-        $newest_url_index = count($new_map)-1;
-        $newest_url_length = count($new_map[$newest_url_index]);
-        $newest_slug_index = $newest_url_length-1;
-        $test_slug_index = ($newest_url_length === $i) ?
-          $newest_slug_index-1 : $newest_slug_index;
-        if ( $tier_i_url[count($tier_i_url)-2] ===
-          $new_map[$newest_url_index][$test_slug_index] ) {
-            $new_map[] = $tier_i_url;
-        }
-      }
-    }
-  }
-  return $new_map;
-}
-
-function urls_from_arrays($domain,$url_arrs) {
-  $table = [];
-  foreach ($url_arrs as $url_arr) {
-    $table[] = [$domain . '/' . join('/', $url_arr)];
-  }
-  return $table;
-}
-
-function repeat_me($str,$int) {
-  $result = "";
-  for ($i = 0; $i < $int; $i++) {
-    $result .= ",";
-  }
-  return $result;
-}
-
-function get_nested_csv_line($depth,$arg,$range) {
-  $str = repeat_me(',',$depth);
-  $str .= $arg;
-  $str .= repeat_me(',', ($range-$depth-1) );
-  $str .= "\r\n";
-  return $str;
-}
-
-function get_csv_nest($table, $nest_range) {
-  $csv_str = get_nested_csv_line(0,'/',$nest_range);
-  foreach($table as $slug_arr) {
-    $nest_index = count($slug_arr)-1;
-    $slug =  '/' . $slug_arr[$nest_index] . '/';
-    $line = get_nested_csv_line($nest_index,$slug,$nest_range);
-    $csv_str .= $line;
-  }
-  return $csv_str;
-}
-
-$map = get_tree($my_domain,$map_cols["URL"]);
-$page_arr = page_array_sequence($map);
-$hrefs = urls_from_arrays($my_domain,$page_arr);
-$map_str = Schema::make_export_str($hrefs);
-$struct_str = get_csv_nest($page_arr,count($map));
-Schema::export_csv($map_str,'map','exports');
-Schema::export_csv($struct_str,'struct','exports');
-
+$crit_str = Schema::make_export_str($new_schema);
+Schema::export_csv($crit_str, 'myexport', 'exports' );
 
 /*
 $cmd_schema = new Schema('cmds-data', '../records');
@@ -114,4 +49,3 @@ $echo_export_str = $this_nester->get_nested_index_echoes($c_monster);
 $this_nester->export_batch_commands($mkdir_export_str,'nesting','batch_files');
 $this_nester->export_batch_commands($echo_export_str,'indexing','batch_files');
 */
-?>
