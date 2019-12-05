@@ -119,11 +119,11 @@ class Schema {
     foreach ($data_table as $data_row) {
       if (is_array($data_row)) {
         for ($i = 0; $i < count($data_row); $i++) {
-          $export_str .= $data_row[$i];
+          $export_str .= . '"' . $data_row[$i] . '"';
           $export_str .= ($i === count($data_row)-1) ? "\r\n" : ",";
         }
       } else {
-        $export_str .= $data_row . "\r\n";
+        $export_str .= . '"' . $data_row . '"' . "\r\n";
       }
     }
     return $export_str;

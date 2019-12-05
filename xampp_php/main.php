@@ -1,20 +1,56 @@
 <?php
 
 require 'schema.php';
-require 'sitemap_monster.php';
+//require 'sitemap_monster.php';
 //require 'deep_nest.php';
 //require 'content_monster.php';
 
-$new_map = [];
-$my_domain = "https://mynewimage.net";
+$new_schema = [];
+$new_row = [];
+$district_schema = new Schema('district-table','../records');
+$rtk_schema = new Schema('rtk-valid','../records');
+$district_table = $district_schema->data_index;
+$rtk_table = $rtk_schema->data_index;
 
+$district_data = Schema::get_labeled_rows($district_table);
+
+function return_district_data($num_arg) {
+  global $district_data;
+  $data = [];
+  if (isset($district_data[$num_arg])) {
+    for ($i = 0; $i < count($district_data[$num_arg]); $i++) {
+      $data[] = $district_data[$num_arg][$i];
+    }
+  } else {
+    $data = false;
+  }
+  return $data;
+}
+
+foreach($rtk_table as $rtk_row) {
+  $new_row = [];
+  $this_row = [];
+  $new_data = return_district_data($rtk_row[$index]);
+  if ($new_data) {
+    $new_row[] = $rtk_row[0];
+    $new_row[] = $rtk_row[1];
+    //etc.
+  }
+  $this_row = array_merge($new_row,$new_data);
+  $new_schema[] = $new_row;
+}
+
+$rtk_str = Schema::make_export_str($new_schema);
+Schema::export_csv($rtk_str,'myexport','../exports');
+/*
+$my_domain = "https://mynewimage.net";
 $this_schema = new Schema('mni-map', '../records');
 $map_cols = Schema::get_labeled_columns($this_schema->data_index);
 $sitemap_monster = new Sitemap_Monster($my_domain,$map_cols["URL"]);
 $map_str = Schema::make_export_str($sitemap_monster->new_map);
 Schema::export_csv($map_str,'map','exports');
 Schema::export_csv($sitemap_monster->csv_str,'struct','exports');
-
+*/
 /*
 function get_branches($paths) {
   $branches = [];
