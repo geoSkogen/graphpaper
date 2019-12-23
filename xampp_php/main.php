@@ -27,7 +27,7 @@ $rtk_table = $rtk_schema->data_index;
 $rtk_mess_table = $rtk_mess_schema->data_index;
 
 $blank_google_row = ['(not net)','(not net)','(not net)','(not net)','(not net)','(not net)','(not net)'];
-
+/*
 foreach($rtk_mess_table as $rtk_mess_row) {
   $found = false;
   $new_row = [];
@@ -42,9 +42,8 @@ foreach($rtk_mess_table as $rtk_mess_row) {
     $new_schema[] = $new_row;
   }
 }
+*/
 
-
-/*
 foreach ($rtk_table as $rtk_row) {
   $new_row = [];
   $this_zip = '';
