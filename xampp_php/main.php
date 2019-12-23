@@ -7,6 +7,7 @@ require 'schema.php';
 
 $new_schema = [];
 $new_row = [];
+/*
 $district_schema = new Schema('ca-western','../records');
 $lookup_schema = new Schema('california-ids','../records');
 $rtk_schema = new Schema('valid','../records');
@@ -15,8 +16,67 @@ $district_table = $district_schema->data_index;
 $rtk_table = $rtk_schema->data_index;
 $lookup_table = $lookup_schema->data_index;
 $rtk_nocrit_table = $rtk_nocrit->data_index;
+*/
+
+$google_schema = new Schema('criteria-ids-ltd-zip-lookup','../records');
+$rtk_schema = new Schema('valid','../records');
+$rtk_mess_schema = new Schema('new-rtk-zips', '../records');
+
+$google_table = $google_schema->data_index;
+$rtk_table = $rtk_schema->data_index;
+$rtk_mess_table = $rtk_mess_schema->data_index;
+
+$blank_google_row = ['(not net)','(not net)','(not net)','(not net)','(not net)','(not net)','(not net)'];
+
+foreach($rtk_mess_table as $rtk_mess_row) {
+  $found = false;
+  $new_row = [];
+  $this_zip = $rtk_mess_row[0];
+  foreach($rtk_table as $rtk_row) {
+    if ($this_zip === $rtk_row[0]) {
+      $found = true;
+    }
+  }
+  if (!$found) {
+    $new_row = array_merge($blank_google_row,$rtk_mess_row);
+    $new_schema[] = $new_row;
+  }
+}
 
 
+/*
+foreach ($rtk_table as $rtk_row) {
+  $new_row = [];
+  $this_zip = '';
+  $zip_diff =  5 - strlen($rtk_row[0]);
+  if ( $zip_diff ) {
+    for ($i = 0; $i < $zip_diff; $i++) {
+      $this_zip .= '0';
+    }
+  }
+  $this_zip .= $rtk_row[0];
+  if ( $zip_diff ) {
+    $trunc_zips[] = $this_zip;
+  }
+  foreach($google_table as $google_row) {
+    if ($google_row[5] === 'Postal Code') {
+      $this_geo_scheme = explode(',',$google_row[2]);
+      $this_match_zip = $this_geo_scheme[0];
+      if ($this_match_zip === $this_zip) {
+        $new_row = array_merge($google_row,$rtk_row);
+        $new_schema[] = $new_row;
+      } else {
+      }
+    }
+  }
+}
+*/
+
+error_log('schema size:');
+error_log(strval(count($new_schema)));
+
+//error_log(strval(count($rtk_table)));
+//error_log(print_r($trunc_zips));
 //$district_data = Schema::get_labeled_rows($district_table);
 
 function return_district_data($num_arg) {
@@ -32,7 +92,7 @@ function return_district_data($num_arg) {
   return $data;
 }
 /*
-//Commits no postal format to trk-valid format via zip lookup
+//Commits no-postal format to rtk-valid format via zip lookup
 $counts = [];
 $zips = [];
 $notfound = 0;
@@ -105,8 +165,7 @@ foreach($rtk_table as $rtk_row) {
   $new_schema[] = $new_row;
 }
 */
-
 $rtk_str = Schema::make_export_str($new_schema);
-Schema::export_csv($rtk_str,'equips-ca-export','exports');
+Schema::export_csv($rtk_str,'equips-rtk-invalid-export','exports');
 
 ?>
