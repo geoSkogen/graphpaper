@@ -19,41 +19,41 @@ $rtk_nocrit_table = $rtk_nocrit->data_index;
 */
 
 $google_schema = new Schema('criteria-ids-ltd-zip-lookup','../records');
-$rtk_schema = new Schema('valid','../records');
-$rtk_mess_schema = new Schema('new-rtk-zips', '../records');
+$rtk_schema = new Schema('equips-rtk-valid-export','../records');
+$rtk_no_schema = new Schema('equips-rtk-invalid-zips','../records');
 
 $google_table = $google_schema->data_index;
 $rtk_table = $rtk_schema->data_index;
-$rtk_mess_table = $rtk_mess_schema->data_index;
+$rtk_no_table = $rtk_no_schema->data_index;
 
 $blank_google_row = ['(not net)','(not net)','(not net)','(not net)','(not net)','(not net)','(not net)'];
-/*
-foreach($rtk_mess_table as $rtk_mess_row) {
-  $found = false;
+
+foreach($rtk_no_table as $rtk_no_row) {
+  $found = [];
   $new_row = [];
-  $this_zip = $rtk_mess_row[0];
-  foreach($rtk_table as $rtk_row) {
-    if ($this_zip === $rtk_row[0]) {
-      $found = true;
+  $this_loc = $rtk_no_row[13];
+  foreach($google_table as $google_row) {
+    if ($rtk_no_row[13] === $google_row[1]) {
+      $found[] = $google_row[0];
     }
   }
-  if (!$found) {
-    $new_row = array_merge($blank_google_row,$rtk_mess_row);
+  if (count($found)) {
+    $new_row = array_merge($rtk_no_row, $found);
     $new_schema[] = $new_row;
   }
 }
-*/
 
+/*
 foreach ($rtk_table as $rtk_row) {
   $new_row = [];
   $this_zip = '';
-  $zip_diff =  5 - strlen($rtk_row[0]);
+  $zip_diff =  5 - strlen($rtk_row[7]);
   if ( $zip_diff ) {
     for ($i = 0; $i < $zip_diff; $i++) {
       $this_zip .= '0';
     }
   }
-  $this_zip .= $rtk_row[0];
+  $this_zip .= $rtk_row[7];
   if ( $zip_diff ) {
     $trunc_zips[] = $this_zip;
   }
@@ -70,7 +70,6 @@ foreach ($rtk_table as $rtk_row) {
   }
 }
 */
-
 error_log('schema size:');
 error_log(strval(count($new_schema)));
 
@@ -164,7 +163,8 @@ foreach($rtk_table as $rtk_row) {
   $new_schema[] = $new_row;
 }
 */
+
 $rtk_str = Schema::make_export_str($new_schema);
-Schema::export_csv($rtk_str,'equips-rtk-invalid-export','exports');
+Schema::export_csv($rtk_str,'equips-rtk-invalid-zips-w-crits','exports');
 
 ?>
