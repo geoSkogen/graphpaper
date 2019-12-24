@@ -21,27 +21,65 @@ $rtk_nocrit_table = $rtk_nocrit->data_index;
 $google_schema = new Schema('criteria-ids-ltd-zip-lookup','../records');
 $rtk_schema = new Schema('equips-rtk-valid-export','../records');
 $rtk_no_schema = new Schema('equips-rtk-invalid-zips','../records');
+$rtk_tally_schema = new Schema('equips-rtk-invalid-zip-locale-tally','../records');
+$google_no_schema = new Schema('crit-ids-not-looked-up-by-zip','../records');
 
 $google_table = $google_schema->data_index;
 $rtk_table = $rtk_schema->data_index;
 $rtk_no_table = $rtk_no_schema->data_index;
+$google_no_table = $google_no_schema->data_index;
+$rtk_tally_table = $rtk_tally_schema->data_index;
 
 $blank_google_row = ['(not net)','(not net)','(not net)','(not net)','(not net)','(not net)','(not net)'];
+
+foreach ($google_no_table as $google_no_row) {
+  if ($google_no_row[5] === 'Neighborhood') {
+    $new_schema[] = $google_no_row;
+  }
+
+}
+/*
+foreach ($rtk_tally_table as $rtk_tally_row) {
+  if ($rtk_tally_row[1] === '1') {
+    foreach ($google_table as $google_row) {
+      if ($google_row[1] === $rtk_tally_row[0]) {
+        foreach ($rtk_no_table as $rtk_no_row) {
+          if ($rtk_no_row[13] === $rtk_tally_row[0]) {
+            $new_row = array_merge($google_row,
+            [ $rtk_no_row[7],$rtk_no_row[8],$rtk_no_row[9],$rtk_no_row[10],$rtk_no_row[11],
+              $rtk_no_row[12],$rtk_no_row[13], $rtk_no_row[14], $rtk_no_row[15] ]
+            );
+            $new_schema[] = $new_row;
+          }
+        }
+      }
+    }
+  }
+}
+*/
+/*
+$locales_tally = array();
+$locale_count = 0;
 
 foreach($rtk_no_table as $rtk_no_row) {
   $found = [];
   $new_row = [];
   $this_loc = $rtk_no_row[13];
-  foreach($google_table as $google_row) {
-    if ($rtk_no_row[13] === $google_row[1]) {
-      $found[] = $google_row[0];
-    }
-  }
-  if (count($found)) {
-    $new_row = array_merge($rtk_no_row, $found);
-    $new_schema[] = $new_row;
+  if (!$locales_tally[$this_loc]) {
+    $locales_tally[$this_loc] = 1;
+  } else {
+    $locales_tally[$this_loc]++;
   }
 }
+
+$keys = array_keys($locales_tally);
+
+foreach($locales_tally as $locale) {
+  $new_schema[] = [ $keys[$locale_count],
+  $locales_tally[$keys[$locale_count]] ];
+  $locale_count++;
+}
+*/
 
 /*
 foreach ($rtk_table as $rtk_row) {
@@ -165,6 +203,6 @@ foreach($rtk_table as $rtk_row) {
 */
 
 $rtk_str = Schema::make_export_str($new_schema);
-Schema::export_csv($rtk_str,'equips-rtk-invalid-zips-w-crits','exports');
+Schema::export_csv($rtk_str,'crit-ids-not-looked-up-by-zip-neighborhood','exports');
 
 ?>
