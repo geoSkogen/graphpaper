@@ -23,21 +23,53 @@ $rtk_schema = new Schema('equips-rtk-valid-export','../records');
 $rtk_no_schema = new Schema('equips-rtk-invalid-zips','../records');
 $rtk_tally_schema = new Schema('equips-rtk-invalid-zip-locale-tally','../records');
 $google_no_schema = new Schema('crit-ids-not-looked-up-by-zip','../records');
+$state_schema = new Schema('state-abbr','../records');
 
 $google_table = $google_schema->data_index;
 $rtk_table = $rtk_schema->data_index;
 $rtk_no_table = $rtk_no_schema->data_index;
 $google_no_table = $google_no_schema->data_index;
 $rtk_tally_table = $rtk_tally_schema->data_index;
+$state_table = $state_schema->data_index;
+
+$state_obj = Schema::get_labeled_rows($state_table);
 
 $blank_google_row = ['(not net)','(not net)','(not net)','(not net)','(not net)','(not net)','(not net)'];
 
-foreach ($google_no_table as $google_no_row) {
-  if ($google_no_row[5] === 'Neighborhood') {
-    $new_schema[] = $google_no_row;
-  }
+$google_tally = array();
 
+foreach ($google_no_table as $google_no_row) {
+  $found = false;
+  $this_place_arr = explode(',',$google_no_row[2]);
+  $this_place_lookup = (!$this_place_arr[count($this_place_arr) - 2]) ?
+    '(not set)' : $this_place_arr[count($this_place_arr) - 2];
+  foreach ($state_table as $state_row) {
+    if ($state_row[0] === $this_place_lookup) {
+      $found = true;
+      $this_place_name = $this_place_lookup . ',' . $state_row[1];
+      if (!$google_tally[$this_place_name]) {
+        $google_tally[$this_place_name] = [$google_no_row[0]];
+      } else {
+        $google_tally[$this_place_name][] = $google_no_row[0];
+      }
+    }
+  }
+  if (!$found) {
+    error_log("place not found:");
+    error_log(print_r($this_place_arr));
+  }
 }
+$total = 0;
+$keys = array_keys($google_tally);
+foreach ($keys as $key) {
+  $total += count($google_tally[$key]);
+  $new_row = [$key,count($google_tally[$key])];
+  $new_schema[] = $new_row;
+}
+
+error_log('total:');
+error_log($total);
+
 /*
 foreach ($rtk_tally_table as $rtk_tally_row) {
   if ($rtk_tally_row[1] === '1') {
@@ -203,6 +235,6 @@ foreach($rtk_table as $rtk_row) {
 */
 
 $rtk_str = Schema::make_export_str($new_schema);
-Schema::export_csv($rtk_str,'crit-ids-not-looked-up-by-zip-neighborhood','exports');
+Schema::export_csv($rtk_str,'crit-ids-tallied-by-locale-name','exports');
 
 ?>
