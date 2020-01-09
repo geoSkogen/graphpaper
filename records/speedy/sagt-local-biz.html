@@ -1,0 +1,71 @@
+<script>
+(function() {
+var el = document.createElement('script');
+var url = window.location.href;
+var state = (window.location.href.indexOf("clark") != -1) ?
+    "WA" : "OR";
+var url_no_slash = url.replace(/\/$/, "");
+var slug = url_no_slash.substr(url_no_slash.lastIndexOf('/')+1);
+var clean_slug = slug.replace(/-/g, " ");
+var jsonData = {
+  "@context": "http://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Speedy Septic",
+  "logo": "https://speedyseptic.com/wp-content/uploads/2019/07/Logo-1.png",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": clean_slug,
+    "addressRegion": state,
+  },
+  "telephone": "503-663-2807",
+  "areaServed": {
+    "@type": "City",
+    "name": clean_slug
+  },
+  "image": "https://speedyseptic.com/wp-content/uploads/2019/07/Logosmall-1.png",
+  "priceRange": "$$$",
+  "url": url,
+  "description" : "",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "opens": "00:00",
+    "closes": "23:59"
+  },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Septic Services",
+    "url": "https://speedyseptic.com/septic-services/",
+    "itemListElement": []
+  },
+  "sameAs": [
+    "https://twitter.com/speedyseptic",
+    "https://www.facebook.com/speedyseptic/"
+  ]
+}
+
+var classed_els = [document.querySelector('h2').parentElement.childNodes[2]];
+
+function makeDescription(arr) {
+  var new_str = '';
+  arr.forEach( function (e) {
+    new_str += (e.textContent + " ");
+  })
+  return new_str;
+}
+
+jsonData.description = makeDescription(classed_els);
+el.type = 'application/ld+json';
+el.innerHTML = JSON.stringify(jsonData);
+document.head.appendChild(el);
+}
+) ();
+</script>

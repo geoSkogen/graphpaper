@@ -9,7 +9,7 @@ $new_schema = [];
 $new_row = [];
 
 /*
-$district_schema = new Schema('ca-western','../records');
+
 $lookup_schema = new Schema('california-ids','../records');
 $rtk_schema = new Schema('valid','../records');
 $rtk_nocrit = new Schema('rtk-no-crit-id', '../records');
@@ -22,18 +22,61 @@ $rtk_nocrit_table = $rtk_nocrit->data_index;
 $google_schema = new Schema('criteria-ids-ltd-zip-lookup','../records');
 $rtk_schema = new Schema('equips-rtk-valid-export','../records');
 $rtk_no_schema = new Schema('equips-rtk-invalid-zips','../records');
-$rtk_district_schema = new Schema('rentokil-district-ids-by-locale-name','../records');
+$rtk_district_schema = new Schema('ca-western','../records');
 $google_no_schema = new Schema('crit-ids-not-looked-up-by-zip','../records');
-$google_ids_by_place = new Schema('crit-ids-by-locale-name','../records');
+//$google_ids_by_place = new Schema('crit-ids-by-locale-name','../records');
 
 $google_table = $google_schema->data_index;
 $rtk_table = $rtk_schema->data_index;
 $rtk_no_table = $rtk_no_schema->data_index;
 $google_no_table = $google_no_schema->data_index;
-$rtk_district_table = $rtk_district_schema->data_index;
-$google_ids_by_place_table = $google_ids_by_place->data_index;
+$district_table = $rtk_district_schema->data_index;
+//$google_ids_by_place_table = $google_ids_by_place->data_index;
 
 $tally = array();
+$pop_report = array();
+
+function return_district_data($num_arg) {
+  global $district_table;
+  $data = [];
+  foreach ($district_table as $district_row) {
+    if ($district_row[0] === $num_arg) {
+      $data = array_slice($district_row,1);
+    }
+  }
+  return $data;
+}
+
+/*
+foreach($rtk_table as $rtk_row) {
+  switch ($rtk_row[8]) {
+    case '32' :
+    case '23' :
+    case '36' :
+      if (!$tally[$rtk_row[8]]) {
+        $tally[$rtk_row[8]] = ['name'=>array(),'pop'=>array()];
+        $tally[$rtk_row[8]]['name'][] = $rtk_row[13];
+        $tally[$rtk_row[8]]['pop'][] = $rtk_row[15];
+      } else {
+        $tally[$rtk_row[8]]['name'][] = $rtk_row[13];
+        $tally[$rtk_row[8]]['pop'][] = $rtk_row[15];
+      }
+      break;
+  }
+}
+
+$keys = array_keys($tally);
+
+foreach( $keys as $key) {
+  array_multisort($tally[$key]['pop'],$tally[$key]['name']);
+  $pop_report[$key] = ['pop' => $tally[$key]['pop'], 'name' => $tally[$key]['name'] ];
+}
+
+error_log(print_r($pop_report));
+*/
+
+
+/*
 $blanks = [];
 for ($i = 0; $i < 10; $i++) {
   $blanks[] = '(not set)';
@@ -64,6 +107,7 @@ foreach($google_ids_by_place_table as $google_place_row) {
     }
   }
 }
+*/
 /*
 foreach ($google_no_table as $google_no_row) {
   $found = false;
@@ -194,25 +238,11 @@ foreach ($rtk_table as $rtk_row) {
   }
 }
 */
-error_log('schema size:');
-error_log(strval(count($new_schema)));
 
 //error_log(strval(count($rtk_table)));
 //error_log(print_r($trunc_zips));
 //$district_data = Schema::get_labeled_rows($district_table);
 
-function return_district_data($num_arg) {
-  global $district_table;
-  $data = [];
-  foreach ($district_table as $district_row) {
-    if ($district_row[0] === $num_arg) {
-      for ($i = 1; $i < count($district_row); $i++) {
-        $data[] = $district_row[$i];
-      }
-    }
-  }
-  return $data;
-}
 /*
 //Commits no-postal format to rtk-valid format via zip lookup
 $counts = [];
@@ -267,28 +297,23 @@ error_log(print_r($data));
 */
 
 //Commits rtk-valid to equips1 format via district lookup
-/*
+
 foreach($rtk_table as $rtk_row) {
   $new_row = [];
   $this_row = [];
+  $this_row_arr = [$rtk_row[0],$rtk_row[1],'US'];
 
   $new_data = return_district_data($rtk_row[8]);
   if (count($new_data)) {
-    $new_row[] = $rtk_row[0];
-    $new_row[] = $rtk_row[1];
-    $new_row[] = 'US';
-    $new_row[] = $new_data[0];
-    $new_row[] = $new_data[1];
-    $new_row[] = $new_data[2];
-    $new_row[] = $new_data[3];
-    $new_row[] = $new_data[4];
-    //etc.
+    $new_row = array_merge($this_row_arr,$new_data);
   }
   $new_schema[] = $new_row;
 }
-*/
+
+error_log('schema size:');
+error_log(strval(count($new_schema)));
 
 $rtk_str = Schema::make_export_str($new_schema);
-Schema::export_csv($rtk_str,'rentokil-auxillary','exports');
+Schema::export_csv($rtk_str,'equips-ca-export','exports');
 
 ?>
