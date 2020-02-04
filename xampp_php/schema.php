@@ -85,10 +85,16 @@ class Schema {
 
   public static function make_export_str($data_table) {
     $export_str = "";
+    $staging_str = "";
     foreach ($data_table as $data_row) {
       if (is_array($data_row)) {
         for ($i = 0; $i < count($data_row); $i++) {
-          $export_str .= '"' . $data_row[$i] . '"';
+          if (is_array($data_row[$i])) {
+            $staging_str = implode(',',$data_row[$i]);
+          } else {
+            $staging_str = $data_row[$i];
+          }
+          $export_str .= '"' . $staging_str . '"';
           $export_str .= ($i === count($data_row)-1) ? "\r\n" : ",";
         }
       } else {

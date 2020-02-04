@@ -1,0 +1,5 @@
+State Code,Branch Name ,Service Area,Service Region,Phone Number ,Geoblock Locations
+NJ,(not set),New Jersey,The Northeast,(714) 507-7025,"""Flemington,Allentown,Vineland,Cherry Hill"""
+FL,(not set),Florida ,The Southeast,(714) 507-7025,"""Jacksonville,Tampa,Ft. Lauderdale,Miami,Ft. Meyers"""
+AZ,(not set),Arizona ,The Southwest ,(610) 288-0965,"""Surprise,Glendale,Goodyear,Buckeye,Litchfield Park,Phoenix,Peoria,Avondale,Carefree,Scottsdale,Tempe,Mesa,Chandler,Phoenix,Gilbert,Apache Junction,Queen Creek,Maricopa,Casa Grande"""
+CA,(not set),California ,The West Coast ,(610) 288-0965,"""Sacramento,Hayward,Orange County,Carson,Riverside,Los Angeles"""

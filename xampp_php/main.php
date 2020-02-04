@@ -19,29 +19,100 @@ $lookup_table = $lookup_schema->data_index;
 $rtk_nocrit_table = $rtk_nocrit->data_index;
 */
 
-$google_schema = new Schema('criteria-ids-ltd-zip-lookup','../records');
+//$google_schema = new Schema('criteria-ids-ltd-zip-lookup','../records');
+//$google_schema = new Schema('crit-ids-unused','../records');
 $rtk_schema = new Schema('equips-rtk-valid-export','../records');
+$ca_schema = new Schema('equips-ca-test-export','../exports');
+$nj_schema = new Schema('equips-nj-test-export','../exports');
+$fl_schema = new Schema('equips-fl-test-export','../exports');
+$az_schema = new Schema('equips-az-test-export','../exports');
+$district_schema = new Schema('district-table-2.3','../records');
+$no_district_schema = new Schema('no-district-table-2.3','../records');
+/*
 $rtk_no_schema = new Schema('equips-rtk-invalid-zips','../records');
 $rtk_district_schema = new Schema('ca-western','../records');
 $google_no_schema = new Schema('crit-ids-not-looked-up-by-zip','../records');
+*/
 //$google_ids_by_place = new Schema('crit-ids-by-locale-name','../records');
 
-$google_table = $google_schema->data_index;
+//$google_table = $google_schema->data_index;
 $rtk_table = $rtk_schema->data_index;
+$ca_table = $ca_schema->data_index;
+$nj_table = $nj_schema->data_index;
+$fl_table = $fl_schema->data_index;
+$az_table = $az_schema->data_index;
+
+$district_table = $district_schema->data_index;
+$no_district_table = $no_district_schema->data_index;
+$states = [null,'NC'];
+
+foreach($rtk_table as $rtk_row) {
+//foreach($az_table as $rtk_row) {
+  if (array_search($rtk_row[14],$states)) {
+    $new_row = [];
+    $this_row_arr = [$rtk_row[0],$rtk_row[1],'US'];
+    //$new_data = return_district_data('AZ');
+    $new_data = return_district_data($rtk_row[8]);
+    if (count($new_data)) {
+      $new_row = array_merge($this_row_arr,$new_data);
+    }
+    $new_schema[] = $new_row;
+  }
+}
+//$pops = ['401'=>array(),'273'=>array()];
+/*
+foreach ($rtk_table as $rtk_row) {
+  $crits[] = $rtk_row[0];
+}
+*/
+/*
+foreach ($google_table as $google_row) {
+  $arr = explode(',',$google_row[2]);
+  if ($arr[1]==="Arizona") {
+    $new_schema[] = $google_row;
+  }
+}
+*/
+/*
+foreach ($rtk_table as $rtk_row) {
+  if (array_key_exists($rtk_row[8],$pops)) {
+    $pops[$rtk_row[8]][] = $rtk_row[15];
+  }
+}
+
+$new_arr = ['401'=>array(),'273'=>array()];
+$keys = array_keys($pops);
+foreach ($keys as $key) {
+  $new_arr[$key] = rsort($pops[$key]);
+}
+
+print_r($pops);
+*/
+/*
 $rtk_no_table = $rtk_no_schema->data_index;
 $google_no_table = $google_no_schema->data_index;
 $district_table = $rtk_district_schema->data_index;
+*/
 //$google_ids_by_place_table = $google_ids_by_place->data_index;
 
 $tally = array();
 $pop_report = array();
 
-function return_district_data($num_arg) {
+
+function return_district_data($arg) {
   global $district_table;
+  global $no_district_table;
   $data = [];
   foreach ($district_table as $district_row) {
-    if ($district_row[0] === $num_arg) {
+    if ($district_row[0] === $arg) {
       $data = array_slice($district_row,1);
+    }
+  }
+  if (!count($data)) {
+    foreach ($no_district_table as $no_district_row) {
+      if ($no_district_row[0] === $arg) {
+        $data = array_slice($no_district_row,1);
+      }
     }
   }
   return $data;
@@ -297,7 +368,7 @@ error_log(print_r($data));
 */
 
 //Commits rtk-valid to equips1 format via district lookup
-
+/*
 foreach($rtk_table as $rtk_row) {
   $new_row = [];
   $this_row = [];
@@ -309,11 +380,11 @@ foreach($rtk_table as $rtk_row) {
   }
   $new_schema[] = $new_row;
 }
-
+*/
 error_log('schema size:');
 error_log(strval(count($new_schema)));
 
 $rtk_str = Schema::make_export_str($new_schema);
-Schema::export_csv($rtk_str,'equips-ca-export','exports');
+Schema::export_csv($rtk_str,'nc-0','exports');
 
 ?>
