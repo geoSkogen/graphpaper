@@ -37,11 +37,12 @@ $google_no_schema = new Schema('crit-ids-not-looked-up-by-zip','../records');
 
 //$google_table = $google_schema->data_index;
 $rtk_table = $rtk_schema->data_index;
+/*
 $ca_table = $ca_schema->data_index;
 $nj_table = $nj_schema->data_index;
 $fl_table = $fl_schema->data_index;
 $az_table = $az_schema->data_index;
-
+*/
 $district_table = $district_schema->data_index;
 $no_district_table = $no_district_schema->data_index;
 $states = [null,'NC'];
