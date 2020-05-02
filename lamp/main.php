@@ -8,6 +8,10 @@ require 'schema.php';
 $new_schema = [];
 $new_row = [];
 
+$my_schema = new Schema('test','../records');
+$my_table = $my_schema->data_index;
+error_log(print_r($my_table));
+/*
 $rtk_schema = new Schema('equips-rtk-valid-export','../records');
 $district_schema = new Schema('district-table-2.3','../records');
 $no_district_schema = new Schema('no-district-table-2.3','../records');
@@ -16,9 +20,9 @@ $rtk_table = $rtk_schema->data_index;
 $district_table = $district_schema->data_index;
 $no_district_table = $no_district_schema->data_index;
 $states = [null,'.*'];
-
+*/
+/*
 foreach($rtk_table as $rtk_row) {
-
   if (array_search($rtk_row[14],$states)) {
     $new_row = [];
     $this_row_arr = [$rtk_row[0],$rtk_row[1],'US'];
@@ -30,9 +34,7 @@ foreach($rtk_table as $rtk_row) {
     $new_schema[] = $new_row;
   }
 }
-
-
-
+*/
 function return_district_data($arg) {
   global $district_table;
   global $no_district_table;

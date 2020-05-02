@@ -7,8 +7,8 @@ class Schema {
   public $labeled_columns = array();
   public $labeled_rows = array();
 
-  function __construct($abspath) {
-    $this->data_index = $this->import_csv_index($abspath);
+  function __construct($filename,$path) {
+    $this->data_index = $this->import_csv_index($filename,$path);
     //$this->data_assoc = $this->make_assoc($filename, $path);
   }
 
