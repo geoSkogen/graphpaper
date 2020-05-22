@@ -1,22 +1,51 @@
 'use strict'
-
+/*
 var Schema = require('./schema.js')
-<<<<<<< HEAD
-=======
-var this_schema = new Schema('faq-you', '../records')
-var new_array = []
-var new str = ''
->>>>>>> revisions-2
+var this_schema = new Schema('allied_geo_targets', '../records')
+var this_table = this_schema.data.index
+
+var new_str = ''
+var json_obj = {
+       "@type":"City",
+       "name":"",
+       "hasMap":"",
+       "geo": {
+         "@type" :"GeoCoordinates",
+         "latitude":"",
+         "longitude":""
+       }
+     }
+function iterate_geos(this_table) {
+  var new_array = []
+  this_table.forEach( function (e) {
+    var city = e[0]
+    var url = ''
+    for (var i = 1; i < e.length-2; i++)  {
+      url += e[i]
+      url += (i===e.length-3) ? '' : ','
+    }
+    var json_obj = {
+           "@type":"City",
+           "name": city,
+           "hasMap":url,
+           "geo": {
+             "@type" :"GeoCoordinates",
+             "latitude":e[e.length-2],
+             "longitude":e[e.length-1]
+           }
+         }
+  new_array.push(json_obj)
+  })
+  return new_array
+}
+
+var my_json = iterate_geos(this_table)
+console.log(my_json)
+*/
 /*
 var DeepNest = require('./deep_nest.js')
 var CMonster = require('./content_monster.js')
 */
-
-var perf_schema = new Schema('performance', '../records')
-var map_cols = Schema::get_labeled_columns(perf_schema->data_index)
-var tt_schema = new Schema('page_titles_all', '../records')
-var map_cols = Schema::get_labeled_columns(tt_schema->data_index)
-
 /*
 var cmd_schema = new Schema('cmds-data', '../records')
 var c_monster = new CMonster(
@@ -32,8 +61,11 @@ var echo_export_str = this_nester.get_nested_index_echoes(c_monster)
 this_nester.export_batch_commands(mkdir_export_str,'nesting','batch_files')
 this_nester.export_batch_commands(echo_export_str,'indexing','batch_files')
 */
-<<<<<<< HEAD
-=======
+
+var Schema = require('./schema.js')
+var this_schema = new Schema('faq-you', '../records')
+var new_array = []
+var new_str = ''
 var jsonData = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -78,5 +110,4 @@ this_schema.data.index.forEach(
 )
 jsonData.mainEntity = new_array
 new_str = JSON.stringify(jsonData)
-this_schema.export_csv(new_data, 'myjson', 'exports')
->>>>>>> revisions-2
+this_schema.export_csv(new_str, 'myjson', 'exports')
