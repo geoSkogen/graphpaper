@@ -42,7 +42,6 @@
         <input type="submit" value="GO"/>
       </div>
     </form>
-    <p><?php echo urlencode('<script>window.location.assign("http://evil.oil")</script>'); ?></p>
   </div>
 </body>
 
