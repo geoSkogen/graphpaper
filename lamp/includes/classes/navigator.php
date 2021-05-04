@@ -3,6 +3,7 @@
 class Navigator {
 
   public $map;
+  public $link_index;
 
   function __construct($data) {
 
@@ -33,33 +34,46 @@ class Navigator {
       }
 
     }
-
+    $link_index = array( 'a'=> [], 'b'=> [] );
     $this->map = new Map($roll);
   }
 
-  public function locate($point_a, $point_b) {
 
+  public function ref_locate($point_a, $point_b) {
+    $result = [];
+
+    if (in_array($point_a,array_keys($this->map->nodes[$point_b]->refs))) {
+
+      $result[] =  $point_a;
+    }
+    return count($result) ? $result : [];
+  }
+
+
+  public function field_locate($haystack,$needle,$arg) {
+    $result = [];
+    foreach($this->map->nodes[$haystack]->field as $key => $arr) {
+
+      if (in_array($needle,$arr)) {
+
+        $result = $arg ? [$haystack,$key,$needle] : [$needle,$key,$haystack];
+      }
+    }
+    return count($result) ? $result : [];
   }
 
 
   public function audit($haystack, $needle) {
     $result = [];
-    $link_index = 0;
-    if (in_array($needle,array_keys($this->map->nodes[$haystack]->refs))) {
 
-      $result[] = array( $needle => $this->map->nodes[$haystack]->refs[$needle] );
+    $result = $this->ref_locate($haystack,$needle);
 
-    } else {
+    $result = (!count($result)) ?
+      $this->field_locate($haystack,$needle,true) : $result;
+      
+    $result = (!count($result)) ?
+      $this->field_locate($needle,$haystack,false) : $result;
 
-      foreach($this->map->nodes[$haystack]->field as $key => $arr) {
-
-        if (in_array($needle,$arr)) {
-
-          $result[] = array( $needle => $this->map->nodes[$needle]->refs[$key] );
-          $result[] = array( $key => $this->map->nodes[$haystack] );
-        }
-      }
-    }
     return count($result) ? $result : false;
   }
 }

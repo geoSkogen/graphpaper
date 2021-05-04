@@ -44,7 +44,7 @@ class Map {
     $arr = array();
     foreach($node->refs as $ref => $val) {
       if (empty($arr[$ref])) {
-        $arr[$ref] = $this->nodes[$ref]->refs;
+        $arr[$ref] = array_keys($this->nodes[$ref]->refs);
       }
     }
     return $arr;
