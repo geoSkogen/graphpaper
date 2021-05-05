@@ -10,6 +10,7 @@ class Node {
     $this->id = $id;
     $this->refs = array( $ref => $rel );
     $this->field = array();
+    
   }
 
 }
