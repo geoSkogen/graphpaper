@@ -49,7 +49,7 @@ class Navigator {
     $this->field_list = array('a'=>[],'b'=>[]);
     $this->link_tracer = array('a'=>[],'b'=>[]);
     $this->path_tracer = array('a'=>[],'b'=>[]);
-    $this->field_index = -1;
+    $this->field_index = array('a'=>-1,'b'=>-1);
   }
 
 
@@ -87,28 +87,21 @@ class Navigator {
     $count = 0;
 
 
-    while (!$result) {
-
+    //while (!$result) {
+    for ($i = 0; $i < 12; $i++) {
       $point_a = $points['a'];
       $point_b = $points['b'];
 
       if (!$count) {
-        $path_tracer_pos = count($this->path_tracer['a'])-1;
+        $a_end = end($this->path_tracer['a']);
+        $b_end = end($this->path_tracer['b']);
 
-        if (
-          (!empty($this->path_tracer['a'][$path_tracer_pos]) &&
-            $this->path_tracer['a'][$path_tracer_pos]!=$point_a) ||
-            ($path_tracer_pos<0)
-        ) {
+        if ($a_end!=$point_a) {
           $this->path_tracer['a'][] = $point_a;
         }
 
-        if (
-          (!empty($this->path_tracer['b'][$path_tracer_pos]) &&
-          $this->path_tracer['b'][$path_tracer_pos]!=$point_b) ||
-          ($path_tracer_pos<0)
-        ) {
-            $this->path_tracer['b'][] = $point_b;
+        if ($b_end!=$point_b) {
+          $this->path_tracer['b'][] = $point_b;
         }
       }
 
@@ -118,6 +111,9 @@ class Navigator {
       $link_tracer_pos = count($this->link_tracer[$link_tracer_prop]);
 
       $this->link_tracer[$link_tracer_prop][] = [];
+
+      $last_crawl_index = (!empty($this->link_tracer[$link_tracer_prop][$link_tracer_pos-1])) ?
+        count($this->link_tracer[$link_tracer_prop][$link_tracer_pos-1]) : 0;
 
       foreach($this->map->nodes[$link_point]->field as $key => $arr ) {
         print("__$link_point=>$key" . "__\r\n");
@@ -147,9 +143,22 @@ class Navigator {
                   print_r($this->path_tracer);
                   print("\r\n");
                   print("\r\n");
-                  print("LINK tracer:");
+                  print("LINK tracer--final iteration:");
                   print("\r\n");
-                  print_r($this->link_tracer);
+                  //$collections_a = end($this->link_tracer['a']);
+                  //$collections_b = end($this->link_tracer['b']);
+                  //$collection_a = (is_array($collections_a)) ? end($collections_a) : ['&Omega;'];
+                  //$collection_b = (is_array($collections_b)) ? end($collections_b) : ['&Omega;'];
+                  print("\r\n");
+                  print('A');
+                  print("\r\n");
+                  //print_r($collection_a);
+                  print_r($this->link_tracer['a']);
+                  print("\r\n");
+                  print('B');
+                  print("\r\n");
+                  //print_r($collection_b);
+                  print_r($this->link_tracer['b']);
                   $this->set_defaults();
                   return $result;
                 }
@@ -167,20 +176,76 @@ class Navigator {
         print("\r\n");
         print('LOOP CONFIG');
         print("\r\n");
-        $this->field_index++;
-        if ($this->field_index===count($this->field_list[$link_tracer_prop])) {
-          $this->field_list[$link_tracer_prop] = [];
-          $this->field_index = 0;
-          foreach( $this->link_tracer[$link_tracer_prop][$link_tracer_pos] as $link_arr ) {
-            if ($link_arr[0]===$link_point)
-            $this->field_list[$link_tracer_prop][] = $link_arr[1];
+
+        foreach(['a','b'] as $loop_tracer_prop) {
+          $this->field_index[$loop_tracer_prop]++;
+          print("tracer prop:\r\n");
+          print($loop_tracer_prop);
+          print("\r\n");
+          print("field list index: \r\n");
+          print( $this->field_index[$loop_tracer_prop] );
+          print("\r\n");
+          print("field list length: \r\n");
+          print( count($this->field_list[$loop_tracer_prop]) );
+          print("\r\n");
+          print("crawl iteration index:");
+          print("\r\n");
+          print(  $link_tracer_pos );
+          print("\r\n");
+          print("index of previous crawl path array:");
+          print("\r\n");
+          print(  $last_crawl_index );
+          print("\r\n");
+          print("most recent crawl path:");
+          print("\r\n");
+          print_r(  $this->link_tracer[$loop_tracer_prop][$link_tracer_pos][$last_crawl_index] );
+          print("\r\n");
+          if ($this->field_index[$loop_tracer_prop]>=count($this->field_list[$loop_tracer_prop])) {
+
+            $this->field_list[$loop_tracer_prop] = [];
+            $this->field_index[$loop_tracer_prop] = 0;
+
+            print("\r\n");
+            print("link point");
+            print("\r\n");
+            print(  $link_point );
+            print("\r\n");
+
+            print("\r\n");
+            print_r("link tracer iterations:");
+            print("\r\n");
+            print(  count($this->link_tracer[$loop_tracer_prop]) );
+            print("\r\n");
+
+            foreach( $this->link_tracer[$loop_tracer_prop][$link_tracer_pos] as $link_arr ) {
+
+              print("\r\n");
+              print_r("link arrays in this link tracer iteration:");
+              print("\r\n");
+              print(  count($this->link_tracer[$loop_tracer_prop][$link_tracer_pos]) );
+              print("\r\n");
+              print("\r\n");
+              print("EVAL: does the link point $points[$loop_tracer_prop] appear as index 0 of:");
+              print("\r\n");
+              print_r( $link_arr );
+              print(" ?\r\n");
+
+              if ( $link_arr[0]==$points[$loop_tracer_prop] &&
+                   !in_array($link_arr[1],$this->field_list[$loop_tracer_prop]) ) {
+                $this->field_list[$loop_tracer_prop][] = $link_arr[1];
+              }
+
+            }
           }
+          print("\r\n");
+          print("current crawl path:");
+          print("\r\n");
+          print_r(  $this->field_list[$loop_tracer_prop] );
+          print("\r\n");
+          // resets points a & b as the next item on
+          $points[$loop_tracer_prop] = $this->field_list[$loop_tracer_prop][$this->field_index[$loop_tracer_prop]];
         }
-
-        $points[$link_tracer_prop] = $this->field_list[$link_tracer_prop][$this->field_index];
-
       }
-
     }
     return $result;
   }
