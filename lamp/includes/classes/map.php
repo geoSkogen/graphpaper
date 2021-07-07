@@ -6,6 +6,7 @@ class Map {
   public $hubs;
   public $links;
   public $bounds;
+  
 
   function __construct($nodes) {
     $this->nodes = $nodes;

@@ -87,8 +87,8 @@ class Navigator {
     $count = 0;
 
 
-    //while (!$result) {
-    for ($i = 0; $i < 12; $i++) {
+    while (!$result) {
+    //for ($i = 0; $i < 12; $i++) {
       $point_a = $points['a'];
       $point_b = $points['b'];
 
