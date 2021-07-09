@@ -5,35 +5,46 @@ class Map {
     this.hubs = []
     this.bounds = []
     this.links = []
+    this.crawl()
   }
 
   crawl() {
     const labels = [null, 'bounds', 'links']
     let distro = []
     let distro_keys = []
-    let distribution =
+    let distribution = []
     this.nodes.forEach( (node) => {
 
-      if (distro[node.refs.length]) {
+      let refs_len = Object.keys(node.refs).length
 
-        distro[node.refs.length] = [node.id]
+      if (!distro[refs_len]) {
+
+        distro[refs_len] = [node.id]
       } else {
-        distro[node.refs.length].push(node.id)
+        distro[refs_len].push(node.id)
       }
+
+      node.field = this.node_field(node)
     })
 
-    distro_keys = Object.keys(distro).sort
+    distro_keys = Object.keys(distro).sort()
     distro_keys.forEach( (key) => {
-      distrubiton[key] = distro[key]
+      distribution[Number(key)] = distro[Number(key)]
     })
 
-    Object.keys(distribution).forEach( (distro_key) => {
-      if (Number(distro_key) > 2) {
-        this.hubs.push[ distribution[ distro_key] ]
+    for (let i = 1; i < distribution.length; i++)  {
+
+      if (i > 2) {
+
+        this.hubs.push( distribution[i] )
       } else {
-        this[ labels[ Number(distro_key) ] ] = distribution[ distro_key ]
+
+        this[ labels[ i ] ] = distribution[ i ]
       }
-    })
+    }
+    console.log(this.hubs)
+
+
   }
 
   node_field(node) {
@@ -42,7 +53,7 @@ class Map {
 
       if (!arr[ref_key]) {
 
-        arr[ ref_keys ] = Object.keys( this.nodes[ ref_keys.refs  ])
+        arr[ ref_key ] = Object.keys( this.nodes[ ref_key.refs ])
       }
     })
     return arr

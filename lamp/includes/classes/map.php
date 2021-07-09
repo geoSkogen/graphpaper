@@ -6,13 +6,14 @@ class Map {
   public $hubs;
   public $links;
   public $bounds;
-  
+
 
   function __construct($nodes) {
     $this->nodes = $nodes;
     $this->hubs =[];
     $this->bounds = [];
     $this->links = [];
+    $this->crawl();
 
   }
 
@@ -21,6 +22,7 @@ class Map {
     $labels = [null,'bounds','links'];
     $distro = [];
     foreach($this->nodes as $node) {
+
       if (empty($distro[count($node->refs)])) {
         $distro[count($node->refs)] = [$node->id];
       } else {
@@ -29,7 +31,7 @@ class Map {
 
       $node->field = $this->node_field($node);
     }
-
+    
     krsort($distro);
 
     foreach( $distro as $key => $arr) {

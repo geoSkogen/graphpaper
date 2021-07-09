@@ -18,7 +18,6 @@ class Navigator {
       var row = data[i]
       var node
 
-
       if (Object.keys(roll).indexOf(row[0])<0) {
 
         node = new Node(row[0],row[1],row[2])
@@ -29,7 +28,7 @@ class Navigator {
 
       if (Object.keys(roll).indexOf(row[1])<0) {
 
-        node = new Node(row[0],row[1],row[2])
+        node = new Node(row[1],row[0],row[2])
         roll[row[1]] = node
       } else {
         roll[row[1]].refs[row[0]] = row[2]
