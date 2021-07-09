@@ -74,6 +74,20 @@ class Navigator {
     return result.length ? result : []
   }
 
+  eval(point_a, point_b) {
+    let result = []
+
+    result = this.ref_locate(point_a, point_b)
+
+    result = (!result.length) ?
+      this.field_locate(point_a, point_b,true) : result
+
+    result = (!result.length) ?
+      this.field_locate(point_b, point_a,false) : result
+
+    return result
+  }
+
 }
 
 module.exports = Navigator
