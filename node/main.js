@@ -3,7 +3,9 @@ const Navigator = require('./includes/classes/navigator.js')
 
 const schema = new Schema('test','../records')
 const nav = new Navigator(schema.data.index)
-/*
-console.log('map links')
-console.log(nav.map.links)
-*/
+
+nav.map.crawl()
+
+var result = nav.field_locate(1,8,true)
+
+console.log(result)

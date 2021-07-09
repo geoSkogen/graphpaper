@@ -5,7 +5,6 @@ class Map {
     this.hubs = []
     this.bounds = []
     this.links = []
-    this.crawl()
   }
 
   crawl() {
@@ -42,18 +41,16 @@ class Map {
         this[ labels[ i ] ] = distribution[ i ]
       }
     }
-    console.log(this.hubs)
-
-
   }
 
   node_field(node) {
     let arr = {}
+
     Object.keys(node.refs).forEach( (ref_key) => {
 
       if (!arr[ref_key]) {
 
-        arr[ ref_key ] = Object.keys( this.nodes[ ref_key.refs ])
+        arr[ ref_key ] = Object.keys( this.nodes[ ref_key ].refs )
       }
     })
     return arr

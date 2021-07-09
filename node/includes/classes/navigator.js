@@ -48,6 +48,32 @@ class Navigator {
     this.path_tracer = {'a':[],'b':[]}
     this.field_index = {'a':-1,'b':-1}
   }
+
+  ref_locate(point_a, point_b) {
+    let result = []
+    if (Object.keys(this.map.nodes[point_b].refs).indexOf( point_a.toString() )>-1) {
+
+      result = [point_a,point_b]
+    }
+    return result.length ? result : []
+  }
+
+  field_locate(haystack,needle,arg) {
+    let result = []
+
+    Object.keys(this.map.nodes[haystack].field).forEach( (key) => {
+
+      if (this.map.nodes[haystack].field[ key.toString() ].indexOf( needle.toString() )>-1) {
+
+        let push_val = arg ? [ haystack.toString(), key, needle.toString() ] :
+          [ needle.toString(), key, haystack.toString() ]
+
+        result.push(push_val)
+      }
+    })
+    return result.length ? result : []
+  }
+
 }
 
 module.exports = Navigator

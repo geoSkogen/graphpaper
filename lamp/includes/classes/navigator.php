@@ -66,6 +66,7 @@ class Navigator {
 
   public function field_locate($haystack,$needle,$arg) {
     $result = [];
+    error_log(print_r($this->map->nodes[$haystack]->field, true) ); 
     foreach($this->map->nodes[$haystack]->field as $key => $arr) {
 
       if (in_array($needle,$arr)) {

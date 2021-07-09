@@ -32,5 +32,9 @@ $data = [
 $nav = new Navigator($data);
 $nav->map->crawl();
 
+$result = $nav->field_locate(1,8,false);
+
+error_log(print_r($result));
+
 
 ?>

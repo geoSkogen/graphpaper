@@ -13,7 +13,7 @@ class Map {
     $this->hubs =[];
     $this->bounds = [];
     $this->links = [];
-    $this->crawl();
+    //$this->crawl();
 
   }
 
@@ -31,7 +31,7 @@ class Map {
 
       $node->field = $this->node_field($node);
     }
-    
+
     krsort($distro);
 
     foreach( $distro as $key => $arr) {
@@ -46,10 +46,14 @@ class Map {
   public function node_field($node) {
     $arr = array();
     foreach($node->refs as $ref => $val) {
+
       if (empty($arr[$ref])) {
+
         $arr[$ref] = array_keys($this->nodes[$ref]->refs);
       }
     }
+    error_log('field');
+    error_log(print_r($arr));
     return $arr;
   }
 
