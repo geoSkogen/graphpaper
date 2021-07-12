@@ -33,7 +33,7 @@ function get_col($table,$index) {
   return $result;
 }
 
-$schema = new Schema('gss_2016_myvars','../records');
+$schema = new Schema('gss_2016_myvars_3','../records');
 // import data as 3D indexed array
 $table = $schema->data_index;
 $new_table = [$table[0]];
@@ -45,18 +45,18 @@ $means = [
   '27' => 0
 ];
 
-
 // iterate each table row
 for ($i = 1; $i < count($table); $i++) {
   $row = $table[$i];
   $new_row = [];
   $sm_score = 0;
   //
-  for ($ii = 0; count($row); $ii++) {
 
-    $datum = strpos($datum,'.') ? floatval($row[$ii]) : intval($row[$ii]);
+  for ($ii = 0;$ii < count($row); $ii++) {
+
+    $datum = strpos($row[$ii],'.') ? floatval($row[$ii]) : intval($row[$ii]);
     // pass the data cell through its indexed filter
-    $cell_val = $ranges[$ii]($datum,$ii);
+    $cell_val = $ranges[strval($ii)]($datum,$ii);
     // insert filtered value into current column index
     $new_row[$ii] = $cell_val;
 
@@ -64,10 +64,13 @@ for ($i = 1; $i < count($table); $i++) {
       // tally the social media score
       $sm_score+=$cell_val;
     }
+
   }
-  // insert social media socre into unused column 35
+  // insert social media score into unused column 35
+
   $new_row[35] = $sm_score;
   $new_table[] = $new_row;
+
 }
 
 $export_str = $schema::make_export_str($new_table);

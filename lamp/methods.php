@@ -1,6 +1,11 @@
 <?php
-$sm_bools = [false,true,false,false];
 
+$sm_bools = [
+  '0'=>false,
+  '1'=>true,
+  '2'=>false,
+  '9'=>false
+];
 
 $ranges = [
   //0
@@ -73,7 +78,7 @@ $ranges = [
     if ($datum > 4) {
       $result = 2;
     }
-    if ($dautm < 1) {
+    if ($datum < 1) {
       $result = 5;
     }
     return $result;
@@ -156,36 +161,43 @@ $ranges = [
   },
   // 28
   function ($datum, $col_index) {
+    global $sm_bools;
     $bool = $sm_bools[$datum];
     return $bool ?  4 : 0;
   },
   // 29
   function ($datum, $col_index) {
+    global $sm_bools;
     $bool = $sm_bools[$datum];
     return $bool ?  5 : 0;
   },
   // 30
   function ($datum, $col_index) {
+    global $sm_bools;
     $bool = $sm_bools[$datum];
     return $bool ?  2 : 0;
   },
   // 31
   function ($datum, $col_index) {
+    global $sm_bools;
     $bool = $sm_bools[$datum];
     return $bool ?  3 : 0;
   },
   // 32
   function ($datum, $col_index) {
+    global $sm_bools;
     $bool = $sm_bools[$datum];
     return $bool ?  1 : 0;
   },
   // 33
   function ($datum, $col_index) {
+    global $sm_bools;
     $bool = $sm_bools[$datum];
     return $bool ?  1 : 0;
   },
   // 34
   function ($datum, $col_index) {
+    global $sm_bools;
     $bool = $sm_bools[$datum];
     return $bool ?  1 : 0;
   },
@@ -224,6 +236,10 @@ $ranges = [
   function ($datum, $col_index) {
     return ($datum < 1 || $datum > 4) ? 2.5 : $datum;
   },
+  // 42
+  function ($datum, $col_index) {
+    return ($datum < 1 || $datum > 5) ? 3 : $datum;
+  },
   // 43
   function ($datum, $col_index) {
     return ($datum < 1 || $datum > 5) ? 3 : $datum;
@@ -234,13 +250,9 @@ $ranges = [
   },
   // 45
   function ($datum, $col_index) {
-    return ($datum < 1 || $datum > 5) ? 3 : $datum;
-  },
-  // 46
-  function ($datum, $col_index) {
     return $datum;
   },
-  // 47
+  // 46
   function ($datum, $col_index) {
     return $datum;
   }
