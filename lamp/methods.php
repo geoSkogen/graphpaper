@@ -8,13 +8,17 @@ $ranges = [
     return $datum > 43 ? 0 : $datum;
   },
   // 1
-  null,
+  function ($datum, $col_index) {
+    return $datum;
+  },
   // 2
   function ($datum,$col_index) {
     return $datum > 89 ? 35.5 : $datum;
   },
   // 3
-  null,
+  function ($datum, $col_index) {
+    return $datum;
+  },
   // 4
   function ($datum, $col_index) {
     return $datum > 20 ? 0 : $datum;
