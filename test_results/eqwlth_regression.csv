@@ -1,0 +1,31 @@
+How little should the state invest toward remedying socioeconomic inequality?,Degree to Which Social Media Consumers are Subject to Polarized and/or Controversial Political Topics,,,,,,,
+N,2862,,,,,,,
+Explanation of Composite Social Media 'Crossfire' Score: ,Total of sub-scores ranked by platform:,,,,,,,
+,,,,,,,,
+PLATFORM,SCORE,,,,,,,
+Facebook ,5,,,,,,,
+Twitter,4,,,,,,,
+Instagram,3,,,,,,,
+LinkedIn,2,,,,,,,
+All others,1,,,,,,,
+"e.g. Facebook, Twitter, Instagram, LinkedIn & Pinterest user score:",14,,,,,,,
+,,,,,,,,
+VARIABLES of INTEREST - test 1,SLOPE - 1,SIG LEVEL - 1,SLOPE - 2,SIG LEVEL - 2,SLOPE - 3,SIG LEVEL - 3,TEST STATS,METRICS
+Social Media 'Crossfire' Composite Score,0.172,***,0.1667,***,0.188,***,R-square,0.1647
+Weekly Frequency of Newspaper Reading ,0.131,***,0.108,***,0.152,***,std error,2.109
+Hours per Day of Television Watching,-0.223,(none),-0.001,(none),-0.041,*,y-int,1.6978
+Hours per Week Spent Using Internet ,-0.009,**,-0.007,*,-0.003,(none),F-stat,112.8
+Level of College Degree (or lack thereof),-0.369,***,-0.287,***,,,P-score,2.20E-16
+,,,,,,,,
+ATTITUDES (MITIGATORS) - SCALAR SELF-RATINGS - test 2,,,,,,,R-square,0.224
+How Conservative Are You?,,,0.351,***,0.328,***,std error,2.034
+How Poorly Do Understand Press Coverage of Scientific Studies? ,,,-0.111,(none),-0.204,*,y-int,1.471
+Of How Little Use Do You Believe Your Job Is to Our Society?,,,-0.373,***,0.391,***,F-stat,103.1
+,,,,,,,P-score,2.20E-16
+,,,,,,,,
+DEMOGRAPHIC CONTROL VARIABLES - test 3,,,,,,,,
+Age (18-89),,,,,0.022,***,R-square,0.2487
+Education Level - scalar ,,,,,0.007,(none),std error,2.003
+Income Level - scalar,,,,,-0.039,*,y-int,0.781
+,,,,,,,F-stat,85.92
+,,,,,,,P-score,2.20E-16
