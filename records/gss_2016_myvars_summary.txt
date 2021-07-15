@@ -1,0 +1,65 @@
+x 0 SIBS 0:43 - top, 0
+x 1 CHILDS - null
+x 2 AGE 18:89 - top, 35.5
+x 3 AGEKDBORN - null
+x 4 EDUC 0:20 - top, 0
+x 5 PAEDUC 0:20 - top, mean
+x 6 MAEDUC 0:20 - top, mean
+
+x 7 DEGREE 0:4 - top,2
+x 8 PADEG 0:4 - top,2
+x 9 MADEG 0:4 - top,2
+x 10 INCOM16 1:5 - top,3 How would you rate your family income level as you saw it at age 16?  
+x 11 HOMEPOP 
+x 12 INCOME 1:12 - top, median - What's your annual income level 
+x 13 INCOME16 1:26 - top, median - What was your annual income level last year?
+x 14 POLVIEWS 1:7 - top, 4 - (lib < cons) How conservative are you? - 
+
+x 15 EQWLTH 1:7 - top, 4 - How little should the gov't concern itself w/ equitable distrubtion of wealth? 
+
+x 16 HEALTH 1:4 - top, 2, bottom, 5 - (good < poor) How poor is your health . . . ? 
+
+Lack of Confidence in Social Institutions 1:3
+
+x 17 CONBUS 1:3 - top & bottom, 2 
+x 18 CONEDUC
+x 19 CONLABOR
+x 20 CONPRESS
+x 21 CONTV
+x 22 CONSCI
+
+x 23 NEWS 1:5 - top & bottom, 5 - How infrequently do you read news?
+x 24 TVHOURS 1:24 - top & bottom, mean - Hours of TV per day
+
+x 25 STRESSWK 1:4 - top & bottom, 2.5 - How low-stress is your job?
+x 26 HELPOOR 1:5 - top & bottom, 3 - How little assistance should people in poverty recieve from the state? 1:5
+
+x 27 WWWHR 0:168 - top & bottom, mean
+
+x 28 TWITTER 4
+x 29 FACEBOOK 5
+x 30 INSTAGRAM 2
+x 31 LINKEDIN 3 
+x 32 TUMBLR : 1
+x 33 PINTREST : 1
+x 34 CLSSMTES : 1
+x 35 SOCMED : 
+
+x 36 MNTLHLTH 0:30 - top, bottom, 0 how many days of the month do you experience symptoms of poor mental health? 
+x 37 CESD1  0:4 - top, 0 - how often throughout the week do you experience depression? 
+
+x 38 SCISTUDY 1:3 - top, 3, bottom, 2 - how poorly do you undertand press coverage of scientific studies? 1:3
+
+x 39 COLDEG1 0:7 - top, 0 - how advanced is your degree? 
+
+x 40 SCIENTGO 1:4 - top, bottom, 2.5 - how little do scientific researchers work toward the greater good of humanity? 
+x 41 SCIENTBE 1:4 - top, bottom, 2.5 - how little does scientfic research benefit the average person? 1:4
+
+x 42 RINTJOB 1:5 - top, bottom, 3 - how uninteresting is your job? 
+x 43 RHLPSOC 1:5 - top, bottom, 3 - how little benefit to society is your job? 
+x 44 PROUDWRK 1:5 - top, bottom, 3 - how little pride do you take in your work? 
+
+x 45 REALINC - family income in dollars
+x 46 REALRINC - individual income in dollars
+lin_reg = lm(formula = EQWLTH ~ SOCMED + NEWS + TVHOURS + wwwHOUR + COLDEG, data = dataset)
+
