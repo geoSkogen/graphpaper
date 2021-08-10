@@ -1,7 +1,8 @@
 How little should the state invest toward remedying socioeconomic inequality?,Degree to Which Social Media Consumers are Subject to Polarized and/or Controversial Political Topics,,,,,,,
-N,2862,,,,,,,
-Explanation of Composite Social Media 'Crossfire' Score: ,Total of sub-scores ranked by platform:,,,,,,,
 ,,,,,,,,
+N (Sample Size),2862,,,,,,,
+,,,,,,,,
+Explanation of Composite Social Media 'Crossfire' Score: ,Total of sub-scores ranked by platform:,,,,,,,
 PLATFORM,SCORE,,,,,,,
 Facebook ,5,,,,,,,
 Twitter,4,,,,,,,
@@ -10,22 +11,42 @@ LinkedIn,2,,,,,,,
 All others,1,,,,,,,
 "e.g. Facebook, Twitter, Instagram, LinkedIn & Pinterest user score:",14,,,,,,,
 ,,,,,,,,
-VARIABLES of INTEREST - test 1,SLOPE - 1,SIG LEVEL - 1,SLOPE - 2,SIG LEVEL - 2,SLOPE - 3,SIG LEVEL - 3,TEST STATS,METRICS
-Social Media 'Crossfire' Composite Score,0.172,***,0.1667,***,0.188,***,R-square,0.1647
-Weekly Frequency of Newspaper Reading ,0.131,***,0.108,***,0.152,***,std error,2.109
-Hours per Day of Television Watching,-0.223,(none),-0.001,(none),-0.041,*,y-int,1.6978
-Hours per Week Spent Using Internet ,-0.009,**,-0.007,*,-0.003,(none),F-stat,112.8
-Level of College Degree (or lack thereof),-0.369,***,-0.287,***,,,P-score,2.20E-16
+TEST STATS,METRICS -1,,METRICS - 2,,METRICS - 3,,METRICS - 4,
+R-square,0.1647,,0.224,,0.2487,,0.4102,
+std error,2.109,,2.034,,2.003,,1.778,
+y-int,1.6978,,1.471,,0.781,,-2.37,
+F-stat,112.8,,103.1,,85.92,,94.2,
+P-score,2.20E-16,,2.20E-16,,2.20E-16,,2.20E-16,
 ,,,,,,,,
-ATTITUDES (MITIGATORS) - SCALAR SELF-RATINGS - test 2,,,,,,,R-square,0.224
-How Conservative Are You?,,,0.351,***,0.328,***,std error,2.034
-How Poorly Do Understand Press Coverage of Scientific Studies? ,,,-0.111,(none),-0.204,*,y-int,1.471
-Of How Little Use Do You Believe Your Job Is to Our Society?,,,-0.373,***,0.391,***,F-stat,103.1
-,,,,,,,P-score,2.20E-16
+VARIABLES of INTEREST - test 1,SLOPE - 1,SIG LEVEL - 1,SLOPE - 2,SIG LEVEL - 2,SLOPE - 3,SIG LEVEL - 3,SLOPE - 4,SIG LEVEL - 4
+Social Media 'Crossfire' Composite Score,0.172,***,0.1667,***,0.188,***,0.098,***
+Weekly Frequency of Newspaper Reading ,0.131,***,0.108,***,0.152,***,0.116,***
+Hours per Day of Television Watching,-0.223,(none),-0.001,(none),-0.041,*,-0.033,*
+Hours per Week Spent Using Internet ,-0.009,**,-0.007,*,-0.003,(none),-0.001,(none)
+Level of College Degree (or lack thereof),-0.369,***,-0.287,***,,,-0.133,**
+,,,,,,,,
+ATTITUDES (MITIGATORS) - SCALAR SELF-RATINGS - test 2,,,,,,,,
+How Conservative Are You?,,,0.351,***,0.328,***,0.313,***
+How Poorly Do Understand Press Coverage of Scientific Studies? ,,,-0.111,(none),-0.204,*,-0.135,(none)
+Of How Little Use Do You Believe Your Job Is to Our Society?,,,-0.373,***,0.391,***,-0.107,(none)
+,,,,,,,,
+ADDITONAL ATTITUDES (MITIGATORS) - SCALAR SELF-RATINGS - test 4,,,,,,,,
+How Little Confidence Do You Have in the Business Sector?,,,,,,,-0.451,***
+How Little Confidence Do You Have in Organized Labor?,,,,,,,0.461,***
+How Little Confidence Do You Have in Scientific Research?,,,,,,,-0.165,*
+How Little Pride Do You Have in the Work You Do?,,,,,,,-0.356,***
+,,,,,,,,
+HEALTH - SCALAR SELF-RATINGS - VARIABLES of INTEREST - test 4,,,,,,,,
+"In General, How Poor is Your Health?",,,,,,,0.592,***
+How Often Have You Felt Depressed in the Past Week?,,,,,,,0.957,***
+How Little Stress Have You Experienced over the Past Week?,,,,,,,0.377,***
 ,,,,,,,,
 DEMOGRAPHIC CONTROL VARIABLES - test 3,,,,,,,,
-Age (18-89),,,,,0.022,***,R-square,0.2487
-Education Level - scalar ,,,,,0.007,(none),std error,2.003
-Income Level - scalar,,,,,-0.039,*,y-int,0.781
-,,,,,,,F-stat,85.92
-,,,,,,,P-score,2.20E-16
+Age (18-89),,,,,0.022,***,0.016,***
+General Education Level - scalar ,,,,,0.007,(none),0.028,(none)
+Income Level - scalar,,,,,-0.039,*,-0.009,(none)
+,,,,,,,,
+ADDITONAL DEMOGRAPHIC CONTROL VARIABLES - test 4,,,,,,,,
+How Would You Rate Your Family's Income Level When You Were 16? - scalar,,,,,,,0.072,(none)
+What Was Your Mother's Education Level? - scalar,,,,,,,0.009,(none)
+What Was Your Father's Education Level? - scalar,,,,,,,0.001,(none)

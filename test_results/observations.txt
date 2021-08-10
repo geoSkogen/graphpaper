@@ -1,10 +1,10 @@
 
 
-Statistically significant predictors of respndents' attitudes about the State's involvemnt 
+Statistically significant predictors of respondents' attitudes about the State's involvement
 in remedying socioeconomic inequality.
 
 While accounting for 41% of the variation in these modeled data, at a confidence rating of 99% or better,
-surveyed inviduals are more likely to disapprove of government's efforts to close the wealth gap if:
+surveyed individuals are more likely to disapprove of government's efforts to close the wealth gap if:
 
 They consume social media known for hosting controversial political debate;
 
@@ -20,18 +20,8 @@ They have experienced less stress in the past week;
 
 Significant mitigating attitudes:
 
-They self-report as more conervative than liberal;
+They self-report as more conservative than liberal;
 
 They have more confidence in the business sector, and less confidence in organized labor;
 
 They take more pride in the work they do;
-
-
-
-
-
-
-
-
-
-
