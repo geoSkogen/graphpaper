@@ -98,13 +98,16 @@ class Navigator {
 
 
   public function getNextJunction() {
+    print("current junctions\r\n");
+    print_r($this->{'current_junctions_' . $this->getPoint()});
+    print_r("calling junction index: " .   strval($this->{'junction_pointer_' . $this->getPoint()}) . "\r\n");
     $result = isset($this->{'current_junctions_' . $this->getPoint()}[ $this->{'junction_pointer_' . $this->getPoint()} ]) ?
       $this->{'current_junctions_' . $this->getPoint()}[ $this->{'junction_pointer_' . $this->getPoint()} ] : '';
     if ($result) {
       $this->{'junction_pointer_' . $this->getPoint()}++;
     } else {
       if ( $this->{'junction_pointer_' . $this->getPoint()} >= count($this->{'current_junctions_' . $this->getPoint()})) {
-        $this->{'junction_pointer_' . $this->getPoint()} = 0;
+        $this->{'junction_pointer_' . $this->getPoint()} = 1;
       }
     }
     return $result;
@@ -113,16 +116,23 @@ class Navigator {
 
   public function nextDrilldown() {
     if ($next_port = $this->getNextPort()) {
+      print("next port\r\n");
       $this->updatePortPaths($next_port);
     } else {
       if ($junction_name = $this->getNextJunction()) {
+        print("\r\ncurrent junction: ");
+        print($junction_name . "\r\n");
         $this->setCurrentJunction($junction_name);
       } else {
-        print("switch current direction");
+        print("\r\nswitch current direction\r\n");
         $this->{'current_junctions_' . $this->getPoint()} = $this->{'next_junctions_' . $this->getPoint()};
         $this->{'next_junctions_' . $this->getPoint()} = [];
+        $this->setCurrentJunction( $this->{'current_junctions_' . $this->getPoint()}[0] );
+        print("next current junction: ");
+        print($this->{'current_junctions_' . $this->getPoint()}[0] . "\r\n");
         $this->iteration_index+= $this->reverseDirection();
       }
+      print("next port\r\n");
       $next_port = $this->getNextPort();
       $this->updatePortPaths($next_port);
     }
@@ -136,14 +146,25 @@ class Navigator {
 
         if (end($path_arr)===$this->{'using_junction_'. $this->getPoint()}->getName()) {
 
-          $path_arr[] = $next_port;
-          $this->{'next_junctions_' . $this->getPoint()}[] = $next_port;
+          $backward = false;
 
-          if (!isset($this->{'paths_' . $this->getPoint()}[$this->iteration_index])) {
-            $this->{'paths_' . $this->getPoint()}[$this->iteration_index] = [];
+          if (!in_array($next_port,$path_arr)) {
+            $path_arr[] = $next_port;
+          } else {
+            $backward = true;
           }
 
-          $this->{'paths_' . $this->getPoint()}[$this->iteration_index][] = $path_arr;
+          if (!in_array($next_port,$this->{'next_junctions_' . $this->getPoint()})) {
+            $this->{'next_junctions_' . $this->getPoint()}[] = $next_port;
+          }
+
+          if (!$backward) {
+            if (!isset($this->{'paths_' . $this->getPoint()}[$this->iteration_index])) {
+              $this->{'paths_' . $this->getPoint()}[$this->iteration_index] = [];
+            }
+
+            $this->{'paths_' . $this->getPoint()}[$this->iteration_index][] = $path_arr;
+          }
         }
       }
     }
@@ -176,10 +197,27 @@ class Navigator {
     print($new_input_point_start . "\r\n");
     $new_input_point_start = $this->nextDrilldown();
     print($new_input_point_start . "\r\n");
-    print_r($this->paths_a);
+    //print_r($this->paths_a);
+    //print_r($this->next_junctions_a);
     $new_input_point_end = $this->nextDrilldown();
     print($new_input_point_end . "\r\n");
-    print_r($this->paths_b);
+    //print_r($this->paths_b);
+    $new_input_point_end = $this->nextDrilldown();
+    print($new_input_point_end . "\r\n");
+    $new_input_point_end = $this->nextDrilldown();
+    print($new_input_point_end . "\r\n");
+    $new_input_point_end = $this->nextDrilldown();
+    print($new_input_point_end . "\r\n");
+    $new_input_point_end = $this->nextDrilldown();
+    print($new_input_point_end . "\r\n");
+    $new_input_point_end = $this->nextDrilldown();
+    print($new_input_point_end . "\r\n");
+    $new_input_point_end = $this->nextDrilldown();
+    print($new_input_point_end . "\r\n");
+    $new_input_point_end = $this->nextDrilldown();
+    print($new_input_point_end . "\r\n");
+
+
     /*
     while (!$this->map->getPortConnection($var_point_start,$var_point_end)) {
 
