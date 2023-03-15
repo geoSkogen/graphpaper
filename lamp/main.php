@@ -1,6 +1,6 @@
 <?php
 if (!class_exists('Navigator')) {
-  include_once 'includes/classes/navigator.php';
+  include_once 'src/Navigator.php';
 }
 
 $data = [
@@ -28,13 +28,19 @@ $data = [
   [16,21,40],
   [11,18,41]
 ];
-
+/*
 $nav = new Navigator($data);
 $nav->map->crawl();
 
-$result = $nav->field_locate(1,8,false);
+$result = $nav->locate(1,16);
 
-error_log(print_r($result));
+print_r($result);
+*/
+
+
+$map = new Map($data);
+$navigator = new Navigator($map);
+$navigator->locate('1','18');
 
 
 ?>
