@@ -68,10 +68,14 @@ class Navigator {
 
   public function reverseDirection() {
     $this->direction = !$this->direction;
-    $this->reverse_counter++;
+    $this->reverse_counter+=1;
+    print("reverse counter has been set to: " . strval($this->reverse_counter) . "\r\n");
     if ($this->reverse_counter>1) {
+      print("second consecutive call to reverse -- returning 1\r\n");
+      $this->reverse_counter = 0;
       return 1;
     } else {
+      print("first call to reverse -- or reset -- returning 0\r\n");
       return 0;
     }
   }
@@ -131,6 +135,7 @@ class Navigator {
         print("next current junction: ");
         print($this->{'current_junctions_' . $this->getPoint()}[0] . "\r\n");
         $this->iteration_index+= $this->reverseDirection();
+        print("the iteration index has been set to " . strval($this->iteration_index) . "\r\n");
       }
       print("next port\r\n");
       $next_port = $this->getNextPort();
@@ -143,22 +148,27 @@ class Navigator {
   public function updatePortPaths(string $next_port) {
     if (isset($this->{'paths_' . $this->getPoint()}[$this->iteration_index-1])) {
       foreach($this->{'paths_' . $this->getPoint()}[$this->iteration_index-1] as $path_arr) {
-
+        print("update port path with $next_port?\r\n");
+        print("is end of ");
+        print_r($path_arr);
+        print("equal to " . $this->{'using_junction_'. $this->getPoint()}->getName() . "?\r\n");
         if (end($path_arr)===$this->{'using_junction_'. $this->getPoint()}->getName()) {
 
           $backward = false;
 
           if (!in_array($next_port,$path_arr)) {
             $path_arr[] = $next_port;
+            print("updated path array\r\n");
           } else {
             $backward = true;
           }
 
-          if (!in_array($next_port,$this->{'next_junctions_' . $this->getPoint()})) {
-            $this->{'next_junctions_' . $this->getPoint()}[] = $next_port;
-          }
-
           if (!$backward) {
+            if (!in_array($next_port,$this->{'next_junctions_' . $this->getPoint()})) {
+              print("updated next junctions array\r\n");
+              $this->{'next_junctions_' . $this->getPoint()}[] = $next_port;
+            }
+
             if (!isset($this->{'paths_' . $this->getPoint()}[$this->iteration_index])) {
               $this->{'paths_' . $this->getPoint()}[$this->iteration_index] = [];
             }
@@ -216,6 +226,14 @@ class Navigator {
     print($new_input_point_end . "\r\n");
     $new_input_point_end = $this->nextDrilldown();
     print($new_input_point_end . "\r\n");
+    $new_input_point_end = $this->nextDrilldown();
+    print($new_input_point_end . "\r\n");
+    $new_input_point_end = $this->nextDrilldown();
+    print($new_input_point_end . "\r\n");
+    $new_input_point_end = $this->nextDrilldown();
+    print($new_input_point_end . "\r\n");
+    //print_r($this->paths_a);
+
 
 
     /*

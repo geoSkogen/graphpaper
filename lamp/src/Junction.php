@@ -28,6 +28,7 @@ class Junction {
     $this->validatePorts($port_names_input);
   }
 
+
   public function getPorts() {
     return $this->port_names;
   }
