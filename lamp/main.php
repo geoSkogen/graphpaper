@@ -28,19 +28,9 @@ $data = [
   [16,21,40],
   [11,18,41]
 ];
-/*
-$nav = new Navigator($data);
-$nav->map->crawl();
-
-$result = $nav->locate(1,16);
-
-print_r($result);
-*/
-
 
 $map = new Map($data);
 $navigator = new Navigator($map);
-$navigator->locate('1','18');
-
+$navigator->locate('1','21');
 
 ?>

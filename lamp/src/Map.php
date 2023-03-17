@@ -48,25 +48,28 @@ class Map {
 
   public function getPortConnection(string $port_a_name, string $port_b_name) {
     $result = null;
-    print("Is $port_a_name in ");
+    print("__LOCATE: {$port_a_name},{$port_b_name}\r\n\r\n");
+    print("Get Port Connection: Is $port_a_name in the ports of $port_b_name ");
     print_r($this->junctions[$port_b_name]->getPorts());
     print("?\r\n");
     if ($this->junctions[$port_a_name] && $this->junctions[$port_b_name]) {
       if (in_array($port_a_name,$this->junctions[$port_b_name]->getPorts())) {
-        print("found $port_a_name in");
+        print("|__Found common port: $port_a_name in\r\n");
         print_r($this->junctions[$port_b_name]->getPorts());
+        print("of $port_a_name and $port_b_name");
         $result = [$port_a_name,$port_b_name];
       } else {
-        print("Does $port_a_name share a port with $port_b_name?\r\n");
+        print("If not, does $port_a_name share a port with $port_b_name?\r\n");
         $common_ports = array_intersect(
           $this->junctions[$port_a_name]->getPorts(),
           $this->junctions[$port_b_name]->getPorts()
         );
         if (count($common_ports)) {
-          print("found common port $common_ports[0] in");
+          $first_common_port = $common_ports[array_keys($common_ports)[0]];
+          print("|__Found common port $first_common_port in\r\n");
           print_r($common_ports);
           print("of $port_a_name and $port_b_name");
-          $result = [$port_a_name,$common_ports[0],$port_b_name];
+          $result = [$port_a_name,$first_common_port,$port_b_name];
         }
       }
     }
