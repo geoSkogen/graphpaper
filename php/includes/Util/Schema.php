@@ -1,0 +1,163 @@
+<?php
+
+class Schema {
+
+  protected array $data_index;
+  protected array $data_assoc;
+  protected array $labeled_columns;
+  protected array $labeled_rows;
+  protected string $export_str;
+
+
+  function __construct(string $path) {
+    $this->data_index = $this->importTable($path);
+    $this->data_assoc = [];
+    $this->labeled_columns = [];
+    $this->labeled_rows = [];
+    $this->export_str = '';
+  }
+
+
+  public function importTable(string $path) {
+    $result = [];
+    if (($handle = fopen(__DIR__ . "/" . $path . ".csv", "r")) !== FALSE) {
+      while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        $result[] = $data;
+      }
+      fclose($handle);
+      return $result;
+    } else {
+      error_log('could not open file');
+      return false;
+    }
+  }
+
+
+  public function getTable() {
+    return $this->data_index;
+  }
+
+  public function getAssociative(bool $is_table) {
+    /* bool > false - assumes columns are labeled, returns indexed associative rows */
+    /* bool > true - assumes columns and rows are labeled, returns 2D associative array */
+    $result = [];
+    $keys = $this->data_index[0];
+    for ($i = 1; 1 < count($this->data_index); $i++) {
+      $row = [];
+      for ($col_index = $is_table; $col_index < count($this->data_index[$i]); $col_index++) {
+        $row[$keys[$col_index]] = $this->data_index[$i][$col_index];
+      }
+      $row_key = ($is_table) ? $this->data_index[$i][0] : $i;
+      $result[$row_key] = $row;
+    }
+    $this->data_assoc = $result;
+    return $result;
+  }
+
+
+  public function getLabeledColumns() {
+    $keys = [];
+    $result = [];
+    for ($row_index = 0; $row_index < count($this->data_index); $row_index++) {
+      for ($i = 0; $i < count($this->data_index[$row_index]); $i++) {
+        if ($row_index === 0) {
+          $result[strval($this->data_index[$row_index][$i])] = [];
+          array_push($keys, $this->data_index[$row_index][$i]);
+        } else {
+          if ($this->data_index[$row_index][$i]) {
+            array_push($result[$keys[$i]],$this->data_index[$row_index][$i]);
+          }
+        }
+      }
+    }
+    $this->labeled_columns = $result;
+    return $result;
+  }
+
+
+  public function getLabeledRows() {
+    $key = "";
+    $valid_data = [];
+    $result = [];
+    foreach ($this->data_index as $row) {
+      $key = $row[0];
+      $valid_data = array_slice($row,1);
+      $result[$key] = $valid_data;
+    }
+    $this->$labeled_rows = $result;
+    return $result;
+  }
+
+
+  public function tableLookup(int $col, int $row) {
+    $result = false;
+    if ( ($col || $col === 0) && ($row || $row === 0) ){
+      if ($this->data_index[$row][$col]) {
+        $result = $this->data_index[$row][$col];
+      }
+    }
+    return $result;
+  }
+
+
+  public function getExportCSV() {
+    $export_str = "";
+    $staging_str = "";
+    foreach ($this->data_table as $data_row) {
+      if (is_array($data_row)) {
+        for ($i = 0; $i < count($data_row); $i++) {
+          if (is_array($data_row[$i])) {
+            $staging_str = implode(',',$data_row[$i]);
+          } else {
+            $staging_str = $data_row[$i];
+          }
+          $export_str .= '"' . $staging_str . '"';
+          $export_str .= ($i === count($data_row)-1) ? "\r\n" : ",";
+        }
+      } else {
+        $export_str .= '"' . $data_row . '"' . "\r\n";
+      }
+    }
+    $this->export_str = $export_str;
+    return $export_str;
+  }
+
+
+  public function getExportJSON(string $data_format = '') {
+    $data = '';
+    if ($data_format) {
+      switch($data_format) {
+        case 'index' :
+        case 'indexed' :
+        case 'table' :
+          $data = $this->data_index;
+          break;
+        case 'rows' :
+        case 'row' :
+          $data = $this->labeled_rows;
+          break;
+        case 'cols' :
+        case 'col' :
+        case 'columns'  :
+        case 'column' :
+          $data = $this->labeled_columns;
+          break;
+        default :
+          $data = $this->data_assoc;
+      }
+    } else {
+      $data = $this->data_assoc;
+    }
+    return json_encode($data);
+  }
+
+
+  public function exportCSV(string $path) {
+    file_put_contents($path . ".csv" , $this->getExportCSV());
+  }
+
+
+  public function exportJSON(string $path) {
+    file_put_contents($path . ".json" , $this->getExportJSON());
+  }
+}
