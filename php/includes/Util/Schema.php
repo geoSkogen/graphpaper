@@ -14,7 +14,6 @@ class Schema {
     $this->data_assoc = [];
     $this->labeled_columns = [];
     $this->labeled_rows = [];
-    $this->export_str = '';
   }
 
 
@@ -37,18 +36,24 @@ class Schema {
     return $this->data_index;
   }
 
-  public function getAssociative(bool $is_table) {
+
+  public function getAssociative(bool $is_table = false) {
     /* bool > false - assumes columns are labeled, returns indexed associative rows */
     /* bool > true - assumes columns and rows are labeled, returns 2D associative array */
     $result = [];
+    $table_col_index = $is_table ? 1 : 0;
     $keys = $this->data_index[0];
-    for ($i = 1; 1 < count($this->data_index); $i++) {
+    for ($i = 1; $i < count($this->data_index); $i++) {
       $row = [];
-      for ($col_index = $is_table; $col_index < count($this->data_index[$i]); $col_index++) {
-        $row[$keys[$col_index]] = $this->data_index[$i][$col_index];
+      if (!empty($this->data_index[$i]) && is_array($this->data_index[$i])) {
+
+        for ($col_index = $table_col_index; $col_index < count($this->data_index[$i]); $col_index++) {
+          $row[ $keys[$col_index] ] = $this->data_index[$i][$col_index];
+        }
+        $row_key = ($is_table) ? $this->data_index[$i][0] : $i;
+        $result[$row_key] = $row;
+
       }
-      $row_key = ($is_table) ? $this->data_index[$i][0] : $i;
-      $result[$row_key] = $row;
     }
     $this->data_assoc = $result;
     return $result;
@@ -100,10 +105,11 @@ class Schema {
   }
 
 
-  public function getExportCSV() {
+  public function getExportCSV(array $table) {
     $export_str = "";
     $staging_str = "";
-    foreach ($this->data_table as $data_row) {
+    $data_table = $table ? $table : $this->data_table;
+    foreach ($data_table as $data_row) {
       if (is_array($data_row)) {
         for ($i = 0; $i < count($data_row); $i++) {
           if (is_array($data_row[$i])) {
@@ -118,7 +124,6 @@ class Schema {
         $export_str .= '"' . $data_row . '"' . "\r\n";
       }
     }
-    $this->export_str = $export_str;
     return $export_str;
   }
 
@@ -134,16 +139,16 @@ class Schema {
           break;
         case 'rows' :
         case 'row' :
-          $data = $this->labeled_rows;
+          $data = $this->getLabeledRows();
           break;
         case 'cols' :
         case 'col' :
         case 'columns'  :
         case 'column' :
-          $data = $this->labeled_columns;
+          $data = $this->getLabeledColumns();
           break;
         default :
-          $data = $this->data_assoc;
+          $data = $this->getAssociative(false);
       }
     } else {
       $data = $this->data_assoc;
@@ -152,8 +157,8 @@ class Schema {
   }
 
 
-  public function exportCSV(string $path) {
-    file_put_contents($path . ".csv" , $this->getExportCSV());
+  public function exportCSV(string $path, array $data = null) {
+    file_put_contents($path . ".csv" , $this->getExportCSV($data));
   }
 
 

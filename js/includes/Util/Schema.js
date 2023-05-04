@@ -1,14 +1,18 @@
 class Schema {
+
   constructor( path ) {
     this.fs = require("fs-extra")
-    this.data_index = this.ImportCSV( path )
+    this.data_index = this.importCSV( path )
+    this.data_assoc = [];
+    this.labeled_columns = [];
+    this.labeled_rows = [];
   }
 
   importCSV( path ) {
     var buffer = ""
     var slug_arr = []
     var data_arr = []
-    var data = this.fs.readFileSync('./' + path + ".csv")
+    var data = this.fs.readFileSync( './' + path + ".csv")
     for (var i = 0; i < data.length; i++) {
       buffer += String.fromCharCode(data[i])
     }
@@ -19,7 +23,32 @@ class Schema {
     return data_arr
   }
 
-  get_labeled_columns( data_arr ) {
+  getTable() {
+    return this.data_index
+  }
+
+  getAssociative(is_table) {
+    /* bool > false - assumes columns are labeled, returns indexed associative rows */
+    /* bool > true - assumes columns and rows are labeled, returns 2D associative array */
+    let result = [];
+    const table_col_index = is_table ? 1 : 0;
+    const keys = this->data_index[0];
+    for (var i = 1; i < count(this.data_index); i) {
+      let row = [];
+      if (this.data_index[i])) {
+
+        for (let col_index = table_col_index; col_index < $this.data_index[i].length); col_index++) {
+          row[ keys[col_index] ] = this.data_index[i][col_index];
+        }
+        let row_key = (is_table) ? this.data_index[i][0] : i;
+        result[row_key] = row;
+      }
+    }
+    this.data_assoc = result;
+    return result
+  }  
+
+  getLabeledColumns( data_arr ) {
     var keys =  []
     var result = []
     for (let row_index = 0; row_index < data_arr.length; row_index++) {
@@ -34,10 +63,11 @@ class Schema {
         }
       }
     }
+    this.labeled_columns = result
     return result
   }
 
-  get_labeled_rows( data_arr ) {
+  getLabeledRows( data_arr ) {
     var key = ''
     var valid_data = []
     var result = []
@@ -56,10 +86,11 @@ class Schema {
         }
       }
     }
+    this.labeled_rows = result
     return result
   }
 
-  table_lookup( col, row ) {
+  tableLookup( col, row ) {
     var result = false
     if ( (col || col === 0) && (row || row === 0) ){
       if (this.data.index[row][col]) {
@@ -69,7 +100,7 @@ class Schema {
     return result
   }
 
-  make_export_str( data ) {
+  getExportCSV( data ) {
     var export_str = ''
     var keys = []
     for (var i = 0; i < data.length; i++) {
@@ -91,8 +122,7 @@ class Schema {
     return export_str
   }
 
-  export_csv( export_str, filename, dir_path ) {
-    var path = "../" + dir_path + "/" + filename + ".csv"
+  exportCSV( export_str, path ) {
     this.fs.writeFile(path, export_str, function(err) {
       if(err) {
         return console.log(err)
