@@ -27,7 +27,7 @@ class Schema {
       return $result;
     } else {
       error_log('could not open file');
-      return false;
+      return [];
     }
   }
 
@@ -108,7 +108,7 @@ class Schema {
   public function getExportCSV(array $table) {
     $export_str = "";
     $staging_str = "";
-    $data_table = $table ? $table : $this->data_table;
+    $data_table = $table ? $table : $this->data_index;
     foreach ($data_table as $data_row) {
       if (is_array($data_row)) {
         for ($i = 0; $i < count($data_row); $i++) {
@@ -158,11 +158,11 @@ class Schema {
 
 
   public function exportCSV(string $path, array $data = null) {
-    file_put_contents($path . ".csv" , $this->getExportCSV($data));
+    file_put_contents(__DIR__ . "/" . $path . ".csv" , $this->getExportCSV($data));
   }
 
 
   public function exportJSON(string $path) {
-    file_put_contents($path . ".json" , $this->getExportJSON());
+    file_put_contents(__DIR__ . "/" . $path . ".json" , $this->getExportJSON());
   }
 }
